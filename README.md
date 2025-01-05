@@ -1,0 +1,1 @@
+# poc-terraform-appsync-dynamodb
