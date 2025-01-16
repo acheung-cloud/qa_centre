@@ -1,12 +1,13 @@
 provider "aws" {
-  region = "us-east-1"
+  # region = "us-east-1" // N. Virginia
+  region = "ap-southeast-2" // Sydney
 }
 
 data "aws_region" "current" {}
 
 # dynamodb
 resource "aws_dynamodb_table" "poc" {
-  name         = "poc_appsync_dynamodb_table"
+  name         = "qa_centre_table"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "PK"
   range_key    = "SK"

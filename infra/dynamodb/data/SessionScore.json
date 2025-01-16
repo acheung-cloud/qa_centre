@@ -1,0 +1,40 @@
+{
+  "qa_centre_table": [
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "Response#1703906366303:A1B2C#1705373808000:F1E2D#adam.smith@polyu.edu.hk"
+          },
+          "SK": {
+            "S": "SessionScore#1705373808000:F1E2D#adam.smith@polyu.edu.hk#1705374789000:7D9E2"
+          },
+          "_Type": {
+            "S": "SessionScore"
+          },
+          "EntityID": {
+            "S": "1703906366303:A1B2C"
+          },
+          "Email": {
+            "S": "adam.smith@polyu.edu.hk"
+          },
+          "GroupID": {
+            "S": "1705373808000:F1E2D"
+          },
+          "SessionID": {
+            "S": "1705374789000:7D9E2"
+          },
+          "Score": {
+            "N": "2"
+          },
+          "Created": {
+            "S": "2025-01-16T04:36:01.000Z"
+          },
+          "CreatedBy": {
+            "S": "adam.smith@polyu.edu.hk"
+          }
+        }
+      }
+    }
+  ]
+}

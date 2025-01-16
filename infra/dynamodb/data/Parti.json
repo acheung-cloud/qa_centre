@@ -1,0 +1,88 @@
+{
+  "qa_centre_table": [
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "Parti#1703906366303:A1B2C#1705373808000:F1E2D"
+          },
+          "SK": {
+            "S": "Parti#1705373808000:F1E2D#adam.smith@polyu.edu.hk"
+          },
+          "_Type": {
+            "S": "Parti"
+          },
+          "EntityID": {
+            "S": "1703906366303:A1B2C"
+          },
+          "GroupID": {
+            "S": "1705373808000:F1E2D"
+          },
+          "Email": {
+            "S": "adam.smith@polyu.edu.hk"
+          },
+          "RegisterDT": {
+            "S": "2024-12-27T04:12:46.303Z"
+          },
+          "LoginDT": {
+            "S": "2025-01-16T04:20:52.000Z"
+          },
+          "Created": {
+            "S": "2024-12-27T04:12:46.303Z"
+          },
+          "Modified": {
+            "S": "2025-01-16T04:20:52.000Z"
+          },
+          "CreatedBy": {
+            "S": "system"
+          },
+          "ModifiedBy": {
+            "S": "system"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "Parti#1703906366303:A1B2C#1705373808000:F1E2D"
+          },
+          "SK": {
+            "S": "Parti#1705373808000:F1E2D#bob.jones@polyu.edu.hk"
+          },
+          "_Type": {
+            "S": "Parti"
+          },
+          "EntityID": {
+            "S": "1703906366303:A1B2C"
+          },
+          "GroupID": {
+            "S": "1705373808000:F1E2D"
+          },
+          "Email": {
+            "S": "bob.jones@polyu.edu.hk"
+          },
+          "RegisterDT": {
+            "S": "2025-01-15T08:30:00.000Z"
+          },
+          "LoginDT": {
+            "S": "2025-01-16T04:20:52.000Z"
+          },
+          "Created": {
+            "S": "2025-01-15T08:30:00.000Z"
+          },
+          "Modified": {
+            "S": "2025-01-16T04:20:52.000Z"
+          },
+          "CreatedBy": {
+            "S": "system"
+          },
+          "ModifiedBy": {
+            "S": "system"
+          }
+        }
+      }
+    }
+  ]
+}

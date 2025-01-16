@@ -1,0 +1,103 @@
+{
+  "qa_centre_table": [
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "Entity"
+          },
+          "SK": {
+            "S": "Entity#1703906366303:A1B2C"
+          },
+          "_Type": {
+            "S": "Entity"
+          },
+          "EntityID": {
+            "S": "1703906366303:A1B2C"
+          },
+          "EntityName": {
+            "S": "Polytechnic University of Hong Kong"
+          },
+          "Created": {
+            "S": "2024-12-27T04:12:46.303Z"
+          },
+          "CreatedBy": {
+            "S": "adam"
+          },
+          "Modified": {
+            "S": "2024-12-27T04:12:46.303Z"
+          },
+          "ModifiedBy": {
+            "S": "adam"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "Entity"
+          },
+          "SK": {
+            "S": "Entity#1705305800000:F5E4D"
+          },
+          "_Type": {
+            "S": "Entity"
+          },
+          "EntityID": {
+            "S": "1705305800000:F5E4D"
+          },
+          "EntityName": {
+            "S": "University of Science and Technology"
+          },
+          "Created": {
+            "S": "2025-01-15T08:30:00.000Z"
+          },
+          "CreatedBy": {
+            "S": "adam"
+          },
+          "Modified": {
+            "S": "2025-01-15T09:45:12.123Z"
+          },
+          "ModifiedBy": {
+            "S": "bob"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "Entity"
+          },
+          "SK": {
+            "S": "Entity#1705315915000:7890F"
+          },
+          "_Type": {
+            "S": "Entity"
+          },
+          "EntityID": {
+            "S": "1705315915000:7890F"
+          },
+          "EntityName": {
+            "S": "City University of Hong Kong"
+          },
+          "Created": {
+            "S": "2025-01-16T02:51:55.000Z"
+          },
+          "CreatedBy": {
+            "S": "bob"
+          },
+          "Modified": {
+            "S": "2025-01-16T02:51:55.000Z"
+          },
+          "ModifiedBy": {
+            "S": "bob"
+          }
+        }
+      }
+    }
+  ]
+}

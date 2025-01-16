@@ -1,0 +1,76 @@
+{
+  "qa_centre_table": [
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "User"
+          },
+          "SK": {
+            "S": "User#adam.smith@polyu.edu.hk"
+          },
+          "_Type": {
+            "S": "User"
+          },
+          "Name": {
+            "S": "Adam Smith"
+          },
+          "Email": {
+            "S": "adam.smith@polyu.edu.hk"
+          },
+          "LoginDT": {
+            "S": "2025-01-16T04:16:07.000Z"
+          },
+          "Created": {
+            "S": "2024-12-27T04:12:46.303Z"
+          },
+          "Modified": {
+            "S": "2025-01-16T04:16:07.000Z"
+          },
+          "CreatedBy": {
+            "S": "system"
+          },
+          "ModifiedBy": {
+            "S": "system"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "User"
+          },
+          "SK": {
+            "S": "User#bob.jones@polyu.edu.hk"
+          },
+          "_Type": {
+            "S": "User"
+          },
+          "Name": {
+            "S": "Bob Jones"
+          },
+          "Email": {
+            "S": "bob.jones@polyu.edu.hk"
+          },
+          "LoginDT": {
+            "S": "2025-01-16T04:16:07.000Z"
+          },
+          "Created": {
+            "S": "2025-01-15T08:30:00.000Z"
+          },
+          "Modified": {
+            "S": "2025-01-16T04:16:07.000Z"
+          },
+          "CreatedBy": {
+            "S": "system"
+          },
+          "ModifiedBy": {
+            "S": "system"
+          }
+        }
+      }
+    }
+  ]
+}

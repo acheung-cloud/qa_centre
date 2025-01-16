@@ -1,0 +1,136 @@
+{
+  "qa_centre_table": [
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "OpLog#1703906366303:A1B2C#2025"
+          },
+          "SK": {
+            "S": "OpLog#2025#01#16#04#30#00"
+          },
+          "_Type": {
+            "S": "OpLog"
+          },
+          "EntityID": {
+            "S": "1703906366303:A1B2C"
+          },
+          "Category": {
+            "S": "Admin operation"
+          },
+          "OpCode": {
+            "N": "1001"
+          },
+          "OpDesc": {
+            "S": "Admin presented Question 1 about TOGAF vs Zachman Framework to Week 1 session"
+          },
+          "Created": {
+            "S": "2025-01-16T04:50:23.000Z"
+          },
+          "CreatedBy": {
+            "S": "admin@polyu.edu.hk"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "OpLog#1703906366303:A1B2C#2025"
+          },
+          "SK": {
+            "S": "OpLog#2025#01#16#04#31#00"
+          },
+          "_Type": {
+            "S": "OpLog"
+          },
+          "EntityID": {
+            "S": "1703906366303:A1B2C"
+          },
+          "Category": {
+            "S": "Participant operation"
+          },
+          "OpCode": {
+            "N": "2001"
+          },
+          "OpDesc": {
+            "S": "Participant adam.smith@polyu.edu.hk submitted answer for Question 1"
+          },
+          "Created": {
+            "S": "2025-01-16T04:50:23.000Z"
+          },
+          "CreatedBy": {
+            "S": "adam.smith@polyu.edu.hk"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "OpLog#1703906366303:A1B2C#2025"
+          },
+          "SK": {
+            "S": "OpLog#2025#01#16#04#35#00"
+          },
+          "_Type": {
+            "S": "OpLog"
+          },
+          "EntityID": {
+            "S": "1703906366303:A1B2C"
+          },
+          "Category": {
+            "S": "Admin operation"
+          },
+          "OpCode": {
+            "N": "1001"
+          },
+          "OpDesc": {
+            "S": "Admin presented Question 2 about Architecture Content Framework to Week 1 session"
+          },
+          "Created": {
+            "S": "2025-01-16T04:50:23.000Z"
+          },
+          "CreatedBy": {
+            "S": "admin@polyu.edu.hk"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "PK": {
+            "S": "OpLog#1703906366303:A1B2C#2025"
+          },
+          "SK": {
+            "S": "OpLog#2025#01#16#04#36#00"
+          },
+          "_Type": {
+            "S": "OpLog"
+          },
+          "EntityID": {
+            "S": "1703906366303:A1B2C"
+          },
+          "Category": {
+            "S": "Participant operation"
+          },
+          "OpCode": {
+            "N": "2001"
+          },
+          "OpDesc": {
+            "S": "Participant adam.smith@polyu.edu.hk submitted answer for Question 2"
+          },
+          "Created": {
+            "S": "2025-01-16T04:50:23.000Z"
+          },
+          "CreatedBy": {
+            "S": "adam.smith@polyu.edu.hk"
+          }
+        }
+      }
+    }
+  ]
+}
