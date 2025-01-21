@@ -1,0 +1,2 @@
+# After creating your Cognito User Pool manually, replace this with your User Pool ID
+cognito_user_pool_id = "ap-southeast-2_xxxxxxxx"

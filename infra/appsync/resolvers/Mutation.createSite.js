@@ -7,7 +7,7 @@ export function request(ctx) {
             SK: { S: `SITE#${ctx.args.input.domain}` }
         },
         attributeValues: {
-            _TYPE: { S: 'SITE' },
+            _Type: { S: 'SITE' },
             id: { S: util.autoUlid() },
             domain: { S: ctx.args.input.domain },
             name: { S: ctx.args.input.name }

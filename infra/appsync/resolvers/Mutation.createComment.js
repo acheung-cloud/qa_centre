@@ -10,7 +10,7 @@ export function request(ctx) {
             SK: { S: `COMMENT#${id}` }
         },
         attributeValues: {
-            _TYPE: { S: 'COMMENT' },
+            _Type: { S: 'COMMENT' },
             id: { S: id },
             postId: { S: ctx.args.input.postId },
             publishDate: { S: ctx.args.input.publishDate ? ctx.args.input.publishDate : util.time.nowISO8601() },

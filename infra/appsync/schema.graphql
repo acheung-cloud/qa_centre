@@ -1,3 +1,10 @@
+# Directives for authorization
+directive @aws_auth(
+  cognito_groups: [String]
+) on FIELD_DEFINITION
+
+directive @aws_iam on FIELD_DEFINITION
+
 schema {
   query: Query
   mutation: Mutation
@@ -5,19 +12,37 @@ schema {
 }
 
 type Query {
+  # Allow both Cognito users and IAM
   listEntities(Num: Int, NextToken: String): EntityConnection
+    @aws_auth
+    @aws_iam
 
+  # Public queries
   getSite(domain: String!): Site
   getPostsForSite(domain: String!, num: Int, after: String): PostConnection
 }
 
 type Mutation {
+  # Only allow IAM (server-side) for entity operations
   createEntity(input: CreateEntityInput): Entity
+    @aws_iam
 
+  # Allow both authenticated users and IAM
   startPageTransition(page: String!): String!
+    @aws_auth
+    @aws_iam
+  
   createSite(input: CreateSiteInput): Site
+    @aws_auth
+    @aws_iam
+  
   createPost(input: CreatePostInput): Post
+    @aws_auth
+    @aws_iam
+  
   createComment(input: CreateCommentInput): Comment
+    @aws_auth
+    @aws_iam
 }
 
 type Subscription {
@@ -52,8 +77,6 @@ type Site {
   domain: String!
   posts: PostConnection!
 }
-
-
 
 type PostConnection {
   cursor: String

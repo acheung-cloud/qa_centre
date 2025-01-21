@@ -35,9 +35,9 @@ export function response(ctx) {
     let posts = [];
 
     ctx.result.items.forEach(item => {
-        if (item["_TYPE"] === "SITE") {
+        if (item["_Type"] === "SITE") {
             site = item;
-        } else if (item["_TYPE"] === "POST") {
+        } else if (item["_Type"] === "POST") {
             posts.push(item);
         }
     });

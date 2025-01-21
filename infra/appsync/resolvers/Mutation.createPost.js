@@ -9,7 +9,7 @@ export function request(ctx) {
             SK: { S: `POST#${id}` }
         },
         attributeValues: {
-            _TYPE: { S: 'POST' },
+            _Type: { S: 'POST' },
             id: { S: id },
             title: { S: ctx.args.input.title },
             content: { S: ctx.args.input.content },

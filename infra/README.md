@@ -1,1 +1,1 @@
-# poc-terraform-appsync-dynamodb
+# qa_centre-terraform-appsync-dynamodb
