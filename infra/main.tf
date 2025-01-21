@@ -28,7 +28,7 @@ resource "aws_dynamodb_table" "poc" {
 
 # appsync api
 resource "aws_appsync_graphql_api" "poc" {
-  name                = "poc_appsync_dynamodb_appsync"
+  name                = "qa_centre_appsync"
   authentication_type = "API_KEY" # other options: API_KEY, AWS_IAM, AMAZON_COGNITO_USER_POOLS, OPENID_CONNECT
   schema              = file("appsync/schema.graphql")
 }
@@ -97,7 +97,42 @@ resource "aws_iam_role_policy" "appsync_dynamodb_policy" {
   })
 }
 
-# appsync query_getItem resolver
+
+# appsync: Entity
+# QueryEntity
+resource "aws_appsync_resolver" "query_listEntities" {
+  api_id      = aws_appsync_graphql_api.poc.id
+  type        = "Query"
+  field       = "listEntities"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Query.listEntities.js")
+}
+
+resource "aws_appsync_resolver" "mutation_createEntity" {
+  api_id      = aws_appsync_graphql_api.poc.id
+  type        = "Mutation"
+  field       = "createEntity"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.createEntity.js")
+}
+
+# appsync: ~Entity
+
+
+# appsync POC
+
 resource "aws_appsync_resolver" "mutation_createSite" {
   api_id      = aws_appsync_graphql_api.poc.id
   type        = "Mutation"

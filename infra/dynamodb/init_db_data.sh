@@ -33,6 +33,11 @@ aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Session
 aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/QALog.json"
 aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/OpLog.json"
 
+# for debug only
+aws dynamodb put-item \
+    --table-name $TABLE_NAME \
+    --item "file://${SCRIPT_DIR}/data/site.json"
+
 # Cleanup: Reset AWS CLI region setting if necessary
 aws configure set default.region ""
 

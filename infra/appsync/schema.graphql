@@ -5,11 +5,15 @@ schema {
 }
 
 type Query {
+  listEntities(Num: Int, NextToken: String): EntityConnection
+
   getSite(domain: String!): Site
   getPostsForSite(domain: String!, num: Int, after: String): PostConnection
 }
 
 type Mutation {
+  createEntity(input: CreateEntityInput): Entity
+
   startPageTransition(page: String!): String!
   createSite(input: CreateSiteInput): Site
   createPost(input: CreatePostInput): Post
@@ -21,12 +25,35 @@ type Subscription {
 		@aws_subscribe(mutations: ["startPageTransition"])
 }
 
+# Entity
+type Entity {
+  EntityID: String!
+  EntityName: String!
+  Created: String!
+  CreatedBy: String!
+  Modified: String!
+  ModifiedBy: String!
+}
+
+type EntityConnection {
+  NextToken: String
+  Entities: [Entity]
+}
+
+input CreateEntityInput {
+  EntityName: String
+}
+
+# ~Entity
+
 type Site {
   id: ID!
   name: String!
   domain: String!
   posts: PostConnection!
 }
+
+
 
 type PostConnection {
   cursor: String
