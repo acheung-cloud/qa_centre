@@ -17,6 +17,11 @@ type Query {
     @aws_auth
     @aws_iam
 
+  # Group queries
+  getGroups(EntityID: String!, Num: Int, NextToken: String): GroupConnection
+    @aws_auth
+    @aws_iam
+
   # Public queries
   getSite(domain: String!): Site
   getPostsForSite(domain: String!, num: Int, after: String): PostConnection
@@ -26,6 +31,10 @@ type Mutation {
   # Only allow IAM (server-side) for entity operations
   createEntity(input: CreateEntityInput): Entity
     @aws_iam 
+    @aws_auth
+
+  createGroup(input: CreateGroupInput): Group
+    @aws_iam
     @aws_auth
 
   # Allow both authenticated users and IAM
@@ -71,6 +80,31 @@ input CreateEntityInput {
 }
 
 # ~Entity
+
+# Group
+type Group {
+  EntityID: String! @aws_iam @aws_auth
+  GroupID: String! @aws_iam @aws_auth
+  GroupName: String! @aws_iam @aws_auth
+  Description: String @aws_iam @aws_auth
+  Created: AWSDateTime! @aws_iam @aws_auth
+  Modified: AWSDateTime @aws_iam @aws_auth
+  CreatedBy: String! @aws_iam @aws_auth
+  ModifiedBy: String @aws_iam @aws_auth
+}
+
+type GroupConnection {
+  NextToken: String @aws_iam @aws_auth
+  Groups: [Group] @aws_iam @aws_auth
+}
+
+input CreateGroupInput {
+  EntityID: String! @aws_iam @aws_auth
+  GroupName: String! @aws_iam @aws_auth
+  Description: String @aws_iam @aws_auth
+}
+
+# ~Group
 
 type Site {
   id: ID! 

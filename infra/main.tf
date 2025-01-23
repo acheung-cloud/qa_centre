@@ -218,6 +218,20 @@ resource "aws_appsync_resolver" "query_getSite" {
   code = file("appsync/resolvers/Query.getSite.js")
 }
 
+resource "aws_appsync_resolver" "query_getGroups" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Query"
+  field       = "getGroups"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Query.getGroups.js")
+}
+
 resource "aws_appsync_resolver" "mutation_createPost" {
   api_id      = aws_appsync_graphql_api.qa_centre.id
   type        = "Mutation"
@@ -286,4 +300,18 @@ resource "aws_appsync_resolver" "mutation_startPageTransition" {
   }
 
   code = file("appsync/resolvers/Multation.startPageTransition.js")
+}
+
+resource "aws_appsync_resolver" "mutation_createGroup" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "createGroup"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.createGroup.js")
 }
