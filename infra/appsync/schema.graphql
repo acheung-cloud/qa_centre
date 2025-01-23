@@ -25,7 +25,8 @@ type Query {
 type Mutation {
   # Only allow IAM (server-side) for entity operations
   createEntity(input: CreateEntityInput): Entity
-    @aws_iam
+    @aws_iam 
+    @aws_auth
 
   # Allow both authenticated users and IAM
   startPageTransition(page: String!): String!
@@ -52,27 +53,27 @@ type Subscription {
 
 # Entity
 type Entity {
-  EntityID: String!
-  EntityName: String!
-  Created: String!
-  CreatedBy: String!
-  Modified: String!
-  ModifiedBy: String!
+  EntityID: String! @aws_iam @aws_auth
+  EntityName: String! @aws_iam @aws_auth
+  Created: String! @aws_iam @aws_auth
+  CreatedBy: String! @aws_iam @aws_auth
+  Modified: String! @aws_iam @aws_auth
+  ModifiedBy: String! @aws_iam @aws_auth
 }
 
 type EntityConnection {
-  NextToken: String
-  Entities: [Entity]
+  NextToken: String @aws_iam @aws_auth
+  Entities: [Entity] @aws_iam @aws_auth
 }
 
 input CreateEntityInput {
-  EntityName: String
+  EntityName: String @aws_iam @aws_auth
 }
 
 # ~Entity
 
 type Site {
-  id: ID!
+  id: ID! 
   name: String!
   domain: String!
   posts: PostConnection!

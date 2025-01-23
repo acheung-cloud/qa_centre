@@ -9,10 +9,15 @@ export function request(ctx) {
 
     // Combine milliseconds with UUID for the ID
     const id = `${milliseconds}-${uuidPart.substring(0, 8)}`; 
+
+    // Get Creator
+    let creator = "unknown";
+    if (ctx.identity.issuer?.includes('cognito-idp')) {
+        creator = ctx.identity.claims['email'] || ctx.identity.username;
+    } else if (ctx.identity.accountId) {
+        creator = `system`;
+    }
    
-    
-    // const id="abc";
-    //const id = `${util.toJson(now)}:${paddedHex}`;
 
     return {
         operation: 'PutItem',
@@ -25,9 +30,9 @@ export function request(ctx) {
             EntityID: { S: id },
             EntityName: { S: ctx.args.input.EntityName },
             Created: { S: util.time.nowISO8601() },
-            CreatedBy: { S: "" },
+            CreatedBy: { S: creator },
             Modified: { S: util.time.nowISO8601() },
-            ModifiedBy: { S: "" },
+            ModifiedBy: { S: creator },
         },
         condition: {
             expression: 'attribute_not_exists(PK)'
