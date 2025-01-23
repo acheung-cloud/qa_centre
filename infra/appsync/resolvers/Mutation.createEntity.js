@@ -10,12 +10,12 @@ export function request(ctx) {
     // Combine milliseconds with UUID for the ID
     const id = `${milliseconds}-${uuidPart.substring(0, 8)}`; 
 
-    // Get Creator
-    let creator = "unknown";
+    // Get the User
+    let user = "unknown";
     if (ctx.identity.issuer?.includes('cognito-idp')) {
-        creator = ctx.identity.claims['email'] || ctx.identity.username;
+        user = ctx.identity.claims['email'] || ctx.identity.username;
     } else if (ctx.identity.accountId) {
-        creator = `system`;
+        user = `system`;
     }
    
 
@@ -30,9 +30,9 @@ export function request(ctx) {
             EntityID: { S: id },
             EntityName: { S: ctx.args.input.EntityName },
             Created: { S: util.time.nowISO8601() },
-            CreatedBy: { S: creator },
+            CreatedBy: { S: user },
             Modified: { S: util.time.nowISO8601() },
-            ModifiedBy: { S: creator },
+            ModifiedBy: { S: user },
         },
         condition: {
             expression: 'attribute_not_exists(PK)'
