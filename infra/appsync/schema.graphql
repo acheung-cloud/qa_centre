@@ -13,12 +13,16 @@ schema {
 
 type Query {
   # Allow both Cognito users and IAM
-  listEntities(Num: Int, NextToken: String): EntityConnection
+  getEntities(Num: Int, NextToken: String): EntityConnection
     @aws_auth
     @aws_iam
 
   # Group queries
   getGroups(EntityID: String!, Num: Int, NextToken: String): GroupConnection
+    @aws_auth
+    @aws_iam
+
+  getSessions(EntityID: String!, GroupID: String!, Num: Int, NextToken: String): SessionConnection
     @aws_auth
     @aws_iam
 
@@ -105,6 +109,26 @@ input CreateGroupInput {
 }
 
 # ~Group
+
+# Session
+type Session {
+  EntityID: String! @aws_iam @aws_auth
+  GroupID: String! @aws_iam @aws_auth
+  SessionID: String! @aws_iam @aws_auth
+  SessionName: String! @aws_iam @aws_auth
+  SessionDescription: String @aws_iam @aws_auth
+  Created: AWSDateTime! @aws_iam @aws_auth
+  Modified: AWSDateTime @aws_iam @aws_auth
+  CreatedBy: String! @aws_iam @aws_auth
+  ModifiedBy: String @aws_iam @aws_auth
+}
+
+type SessionConnection {
+  NextToken: String @aws_iam @aws_auth
+  Sessions: [Session] @aws_iam @aws_auth
+}
+
+# ~Session
 
 type Site {
   id: ID! 

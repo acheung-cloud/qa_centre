@@ -157,10 +157,10 @@ resource "aws_iam_role_policy" "appsync_dynamodb_policy" {
 
 # appsync: Entity
 # QueryEntity
-resource "aws_appsync_resolver" "query_listEntities" {
+resource "aws_appsync_resolver" "query_getEntities" {
   api_id      = aws_appsync_graphql_api.qa_centre.id
   type        = "Query"
-  field       = "listEntities"
+  field       = "getEntities"
   data_source = aws_appsync_datasource.dynamodb.name
 
   runtime {
@@ -168,7 +168,7 @@ resource "aws_appsync_resolver" "query_listEntities" {
     runtime_version = "1.0.0"
   }
 
-  code = file("appsync/resolvers/Query.listEntities.js")
+  code = file("appsync/resolvers/Query.getEntities.js")
 }
 
 resource "aws_appsync_resolver" "mutation_createEntity" {
@@ -314,4 +314,18 @@ resource "aws_appsync_resolver" "mutation_createGroup" {
   }
 
   code = file("appsync/resolvers/Mutation.createGroup.js")
+}
+
+resource "aws_appsync_resolver" "query_getSessions" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Query"
+  field       = "getSessions"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Query.getSessions.js")
 }
