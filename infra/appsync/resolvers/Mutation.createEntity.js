@@ -1,24 +1,31 @@
 import { util } from '@aws-appsync/utils'
 
-export function request(ctx) {
-    // Get milliseconds since the Epoch using AppSync util
-    const milliseconds = util.time.nowEpochMilliSeconds();
-    
-    // Generate a UUID v4
-    const uuidPart = util.autoUlid(); // Remove hyphens to shorten
-
-    // Combine milliseconds with UUID for the ID
-    const id = `${milliseconds}-${uuidPart.substring(0, 8)}`; 
-
-    // Get the User
+// Utility functions
+function getUser(ctx) {
     let user = "unknown";
     if (ctx.identity.issuer?.includes('cognito-idp')) {
         user = ctx.identity.claims['email'] || ctx.identity.username;
     } else if (ctx.identity.accountId) {
         user = `system`;
     }
-   
+    return user;
+}
 
+function generateId() {
+    const milliseconds = util.time.nowEpochMilliSeconds();
+    const uuidPart = util.autoUlid();
+    return `${milliseconds}-${uuidPart.substring(0, 8)}`;
+}
+
+function getTimestamp() {
+    return util.time.nowISO8601();
+}
+
+export function request(ctx) {
+    const id = generateId();
+    const user = getUser(ctx);
+    const timestamp = getTimestamp();
+   
     return {
         operation: 'PutItem',
         key: {
@@ -29,9 +36,9 @@ export function request(ctx) {
             _Type: { S: 'Entity' },
             EntityID: { S: id },
             EntityName: { S: ctx.args.input.EntityName },
-            Created: { S: util.time.nowISO8601() },
+            Created: { S: timestamp },
             CreatedBy: { S: user },
-            Modified: { S: util.time.nowISO8601() },
+            Modified: { S: timestamp },
             ModifiedBy: { S: user },
         },
         condition: {
