@@ -22,7 +22,7 @@ type Query {
     @aws_auth
     @aws_iam
 
-  getSessions(EntityID: String!, GroupID: String!, Num: Int, NextToken: String): SessionConnection
+  getSessions(GroupID: String!, Num: Int, NextToken: String): SessionConnection
     @aws_auth
     @aws_iam
 

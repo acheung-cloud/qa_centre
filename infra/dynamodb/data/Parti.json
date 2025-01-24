@@ -4,10 +4,10 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "Parti#1703906366303:A1B2C#1705373808000:F1E2D"
+            "S": "Parti#1705373808000:F1E2D"
           },
           "SK": {
-            "S": "Parti#1705373808000:F1E2D#adam.smith@polyu.edu.hk"
+            "S": "Parti#adam.smith@polyu.edu.hk"
           },
           "_Type": {
             "S": "Parti"
@@ -46,10 +46,10 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "Parti#1703906366303:A1B2C#1705373808000:F1E2D"
+            "S": "Parti#1705373808000:F1E2D"
           },
           "SK": {
-            "S": "Parti#1705373808000:F1E2D#bob.jones@polyu.edu.hk"
+            "S": "Parti#bob.jones@polyu.edu.hk"
           },
           "_Type": {
             "S": "Parti"

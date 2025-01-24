@@ -4,10 +4,10 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "Response#1703906366303:A1B2C#1705373808000:F1E2D#adam.smith@polyu.edu.hk"
+            "S": "Response#1705373808000:F1E2D#adam.smith@polyu.edu.hk"
           },
           "SK": {
-            "S": "ResponseLog#1705373808000:F1E2D#adam.smith@polyu.edu.hk#1705374789000:7D9E2#1705376526000:E2F3A"
+            "S": "ResponseLog#adam.smith@polyu.edu.hk#1705374789000:7D9E2#1705376526000:E2F3A"
           },
           "_Type": {
             "S": "ResponseLog"
@@ -89,10 +89,10 @@
       "PutRequest": {
         "Item": {
           "PK": {
-            "S": "Response#1703906366303:A1B2C#1705373808000:F1E2D#adam.smith@polyu.edu.hk"
+            "S": "Response#1705373808000:F1E2D#adam.smith@polyu.edu.hk"
           },
           "SK": {
-            "S": "ResponseLog#1705373808000:F1E2D#adam.smith@polyu.edu.hk#1705374789000:7D9E2#1705376769000:D5E2F"
+            "S": "ResponseLog#adam.smith@polyu.edu.hk#1705374789000:7D9E2#1705376769000:D5E2F"
           },
           "_Type": {
             "S": "ResponseLog"

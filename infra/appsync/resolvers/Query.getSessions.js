@@ -10,8 +10,8 @@ export function request(ctx) {
         query: {
             expression: "PK = :pk AND begins_with(SK, :sk)",
             expressionValues: {
-                ":pk": {S: `Session#${ctx.args.EntityID}#${ctx.args.GroupID}`},
-                ":sk": {S: `Session#${ctx.args.GroupID}#`}
+                ":pk": {S: `Group#${ctx.args.GroupID}`},
+                ":sk": {S: `Session#`}
             }
         },
         scanIndexForward: false,
