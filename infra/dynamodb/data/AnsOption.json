@@ -37,10 +37,10 @@
             "S": "This highlights the key methodological differences between the frameworks"
           },
           "Created": {
-            "S": "2025-01-16T04:08:51.000Z"
+            "S": "2025-01-16T04:08:51.000+00:00"
           },
           "Modified": {
-            "S": "2025-01-16T04:08:51.000Z"
+            "S": "2025-01-16T04:08:51.000+00:00"
           },
           "CreatedBy": {
             "S": "adam"
@@ -88,10 +88,10 @@
             "S": "This answer incorrectly characterizes both frameworks' primary focuses"
           },
           "Created": {
-            "S": "2025-01-16T04:08:51.000Z"
+            "S": "2025-01-16T04:08:51.000+00:00"
           },
           "Modified": {
-            "S": "2025-01-16T04:08:51.000Z"
+            "S": "2025-01-16T04:08:51.000+00:00"
           },
           "CreatedBy": {
             "S": "adam"
@@ -139,10 +139,10 @@
             "S": "This answer incorrectly describes the historical context and purposes of both frameworks"
           },
           "Created": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "Modified": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "CreatedBy": {
             "S": "adam"
@@ -190,10 +190,10 @@
             "S": "This answer incorrectly suggests the frameworks are identical"
           },
           "Created": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "Modified": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "CreatedBy": {
             "S": "adam"
@@ -241,10 +241,10 @@
             "S": "This correctly identifies and describes the relationship between the four main ADM domains"
           },
           "Created": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "Modified": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "CreatedBy": {
             "S": "adam"
@@ -292,10 +292,10 @@
             "S": "This incorrectly describes SDLC phases instead of ADM architecture domains"
           },
           "Created": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "Modified": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "CreatedBy": {
             "S": "adam"
@@ -343,10 +343,10 @@
             "S": "This incorrectly mixes project phases with architecture domains"
           },
           "Created": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "Modified": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "CreatedBy": {
             "S": "adam"
@@ -394,10 +394,10 @@
             "S": "This incorrectly focuses on operational aspects rather than architectural domains"
           },
           "Created": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "Modified": {
-            "S": "2025-01-16T04:11:20.000Z"
+            "S": "2025-01-16T04:11:20.000+00:00"
           },
           "CreatedBy": {
             "S": "adam"

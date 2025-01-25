@@ -154,9 +154,21 @@ resource "aws_iam_role_policy" "appsync_dynamodb_policy" {
   })
 }
 
+resource "aws_appsync_resolver" "mutation_startPageTransition" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "startPageTransition"
+  data_source = aws_appsync_datasource.none.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Multation.startPageTransition.js")
+}
 
 # appsync: Entity
-# QueryEntity
 resource "aws_appsync_resolver" "query_getEntities" {
   api_id      = aws_appsync_graphql_api.qa_centre.id
   type        = "Query"
@@ -187,37 +199,7 @@ resource "aws_appsync_resolver" "mutation_createEntity" {
 
 # appsync: ~Entity
 
-
-# appsync qa_centre
-
-resource "aws_appsync_resolver" "mutation_createSite" {
-  api_id      = aws_appsync_graphql_api.qa_centre.id
-  type        = "Mutation"
-  field       = "createSite"
-  data_source = aws_appsync_datasource.dynamodb.name
-
-  runtime {
-    name            = "APPSYNC_JS"
-    runtime_version = "1.0.0"
-  }
-
-  code = file("appsync/resolvers/Mutation.createSite.js")
-}
-
-resource "aws_appsync_resolver" "query_getSite" {
-  api_id      = aws_appsync_graphql_api.qa_centre.id
-  type        = "Query"
-  field       = "getSite"
-  data_source = aws_appsync_datasource.dynamodb.name
-
-  runtime {
-    name            = "APPSYNC_JS"
-    runtime_version = "1.0.0"
-  }
-
-  code = file("appsync/resolvers/Query.getSite.js")
-}
-
+# appsync: Group
 resource "aws_appsync_resolver" "query_getGroups" {
   api_id      = aws_appsync_graphql_api.qa_centre.id
   type        = "Query"
@@ -230,76 +212,6 @@ resource "aws_appsync_resolver" "query_getGroups" {
   }
 
   code = file("appsync/resolvers/Query.getGroups.js")
-}
-
-resource "aws_appsync_resolver" "mutation_createPost" {
-  api_id      = aws_appsync_graphql_api.qa_centre.id
-  type        = "Mutation"
-  field       = "createPost"
-  data_source = aws_appsync_datasource.dynamodb.name
-
-  runtime {
-    name            = "APPSYNC_JS"
-    runtime_version = "1.0.0"
-  }
-
-  code = file("appsync/resolvers/Mutation.createPost.js")
-}
-
-resource "aws_appsync_resolver" "query_getPostsForSite" {
-  api_id      = aws_appsync_graphql_api.qa_centre.id
-  type        = "Query"
-  field       = "getPostsForSite"
-  data_source = aws_appsync_datasource.dynamodb.name
-
-  runtime {
-    name            = "APPSYNC_JS"
-    runtime_version = "1.0.0"
-  }
-
-  code = file("appsync/resolvers/Query.getPostsForSite.js")
-}
-
-resource "aws_appsync_resolver" "mutation_createComment" {
-  api_id      = aws_appsync_graphql_api.qa_centre.id
-  type        = "Mutation"
-  field       = "createComment"
-  data_source = aws_appsync_datasource.dynamodb.name
-
-  runtime {
-    name            = "APPSYNC_JS"
-    runtime_version = "1.0.0"
-  }
-
-  code = file("appsync/resolvers/Mutation.createComment.js")
-}
-
-resource "aws_appsync_resolver" "post_comments" {
-  api_id      = aws_appsync_graphql_api.qa_centre.id
-  type        = "Post"
-  field       = "comments"
-  data_source = aws_appsync_datasource.dynamodb.name
-
-  runtime {
-    name            = "APPSYNC_JS"
-    runtime_version = "1.0.0"
-  }
-
-  code = file("appsync/resolvers/Post.comments.js")
-}
-
-resource "aws_appsync_resolver" "mutation_startPageTransition" {
-  api_id      = aws_appsync_graphql_api.qa_centre.id
-  type        = "Mutation"
-  field       = "startPageTransition"
-  data_source = aws_appsync_datasource.none.name
-
-  runtime {
-    name            = "APPSYNC_JS"
-    runtime_version = "1.0.0"
-  }
-
-  code = file("appsync/resolvers/Multation.startPageTransition.js")
 }
 
 resource "aws_appsync_resolver" "mutation_createGroup" {
@@ -316,6 +228,24 @@ resource "aws_appsync_resolver" "mutation_createGroup" {
   code = file("appsync/resolvers/Mutation.createGroup.js")
 }
 
+# appsync: ~Group
+
+# appsync: Session
+
+resource "aws_appsync_resolver" "mutation_createSession" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "createSession"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.createSession.js")
+}
+
 resource "aws_appsync_resolver" "query_getSessions" {
   api_id      = aws_appsync_graphql_api.qa_centre.id
   type        = "Query"
@@ -329,3 +259,5 @@ resource "aws_appsync_resolver" "query_getSessions" {
 
   code = file("appsync/resolvers/Query.getSessions.js")
 }
+
+# appsync: ~Session

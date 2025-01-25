@@ -37,6 +37,10 @@ type Mutation {
     @aws_iam
     @aws_auth
 
+  createSession(input: CreateSessionInput): Session
+    @aws_iam
+    @aws_auth
+
   # Allow both authenticated users and IAM
   startPageTransition(page: String!): String!
     @aws_auth
@@ -53,10 +57,11 @@ type Subscription {
 type Entity {
   EntityID: String! @aws_iam @aws_auth
   EntityName: String! @aws_iam @aws_auth
-  Created: String! @aws_iam @aws_auth
+  Created: AWSDateTime! @aws_iam @aws_auth
+  Modified: AWSDateTime! @aws_iam @aws_auth
   CreatedBy: String! @aws_iam @aws_auth
-  Modified: String! @aws_iam @aws_auth
   ModifiedBy: String! @aws_iam @aws_auth
+  IsDeleted: Boolean! @aws_iam @aws_auth
 }
 
 type EntityConnection {
@@ -65,7 +70,7 @@ type EntityConnection {
 }
 
 input CreateEntityInput {
-  EntityName: String @aws_iam @aws_auth
+  EntityName: String! @aws_iam @aws_auth
 }
 
 # ~Entity
@@ -106,6 +111,7 @@ type Session {
   Modified: AWSDateTime @aws_iam @aws_auth
   CreatedBy: String! @aws_iam @aws_auth
   ModifiedBy: String @aws_iam @aws_auth
+  IsDeleted: Boolean! @aws_iam @aws_auth
 }
 
 type SessionConnection {
@@ -113,5 +119,11 @@ type SessionConnection {
   Sessions: [Session] @aws_iam @aws_auth
 }
 
-# ~Session
+input CreateSessionInput {
+  EntityID: String! @aws_iam @aws_auth
+  GroupID: String! @aws_iam @aws_auth
+  SessionName: String! @aws_iam @aws_auth
+  SessionDescription: String @aws_iam @aws_auth
+}
 
+# ~Session

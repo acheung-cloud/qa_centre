@@ -25,7 +25,7 @@
             "S": "Admin presented Question 1 about TOGAF vs Zachman Framework to Week 1 session"
           },
           "Created": {
-            "S": "2025-01-16T04:50:23.000Z"
+            "S": "2025-01-16T04:50:23.000+00:00"
           },
           "CreatedBy": {
             "S": "admin@polyu.edu.hk"
@@ -58,7 +58,7 @@
             "S": "Participant adam.smith@polyu.edu.hk submitted answer for Question 1"
           },
           "Created": {
-            "S": "2025-01-16T04:50:23.000Z"
+            "S": "2025-01-16T04:50:23.000+00:00"
           },
           "CreatedBy": {
             "S": "adam.smith@polyu.edu.hk"
@@ -91,7 +91,7 @@
             "S": "Admin presented Question 2 about Architecture Content Framework to Week 1 session"
           },
           "Created": {
-            "S": "2025-01-16T04:50:23.000Z"
+            "S": "2025-01-16T04:50:23.000+00:00"
           },
           "CreatedBy": {
             "S": "admin@polyu.edu.hk"
@@ -124,7 +124,7 @@
             "S": "Participant adam.smith@polyu.edu.hk submitted answer for Question 2"
           },
           "Created": {
-            "S": "2025-01-16T04:50:23.000Z"
+            "S": "2025-01-16T04:50:23.000+00:00"
           },
           "CreatedBy": {
             "S": "adam.smith@polyu.edu.hk"

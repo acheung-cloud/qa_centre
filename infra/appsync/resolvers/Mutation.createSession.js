@@ -22,20 +22,25 @@ function getTimestamp() {
 }
 
 export function request(ctx) {
-    const id = generateId();
+    const sessionId = generateId();
     const user = getUser(ctx);
     const timestamp = getTimestamp();
+    const groupId = ctx.args.input.GroupID;
+    const entityId = ctx.args.input.EntityID;
    
     return {
         operation: 'PutItem',
         key: {
-            PK: { S: 'Entity' },
-            SK: { S: `Entity#${id}` }
+            PK: { S: `Group#${groupId}` },
+            SK: { S: `Session#${sessionId}` }
         },
         attributeValues: {
-            _Type: { S: 'Entity' },
-            EntityID: { S: id },
-            EntityName: { S: ctx.args.input.EntityName },
+            _Type: { S: 'Session' },
+            EntityID: { S: entityId },
+            SessionID: { S: sessionId },
+            GroupID: { S: groupId },
+            SessionName: { S: ctx.args.input.SessionName },
+            SessionDescription: { S: ctx.args.input.SessionDescription || '' },
             Created: { S: timestamp },
             CreatedBy: { S: user },
             Modified: { S: timestamp },
@@ -52,11 +57,14 @@ export function response(ctx) {
     const result = ctx.result;
     return {
         EntityID: result.EntityID.S,
-        EntityName: result.EntityName.S,
+        GroupID: result.GroupID.S,
+        SessionID: result.SessionID.S,
+        SessionName: result.SessionName.S,
+        SessionDescription: result.SessionDescription.S,
         Created: result.Created.S,
         Modified: result.Modified.S,
         CreatedBy: result.CreatedBy.S,
         ModifiedBy: result.ModifiedBy.S,
-        IsDeleted: result.IsDeleted.BOOL
+        IsDeleted: result.IsDeleted ? result.IsDeleted.BOOL : false
     };
 }
