@@ -32,14 +32,15 @@ export function response(ctx) {
 
     const items = ctx.result.items || [];
     const groups = items.map(item => ({
-        EntityID: item.EntityID,
-        GroupID: item.GroupID,
-        GroupName: item.GroupName,
-        Description: item.Description,
-        Created: item.Created,
-        Modified: item.Modified,
-        CreatedBy: item.CreatedBy,
-        ModifiedBy: item.ModifiedBy
+        EntityID: item["EntityID"],
+        GroupID: item["GroupID"],
+        GroupName: item["GroupName"],
+        Description: item["Description"],
+        Created: item["Created"],
+        Modified: item["Modified"],
+        CreatedBy: item["CreatedBy"],
+        ModifiedBy: item["ModifiedBy"],
+        IsDeleted: item["IsDeleted"] ? item["IsDeleted"] : false
     }));
 
     return {

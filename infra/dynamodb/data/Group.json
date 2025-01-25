@@ -35,6 +35,9 @@
           },
           "ModifiedBy": {
             "S": "adam"
+          },
+          "IsDeleted": {
+            "BOOL": false
           }
         }
       }
@@ -74,6 +77,9 @@
           },
           "ModifiedBy": {
             "S": "adam"
+          },
+          "IsDeleted": {
+            "BOOL": false
           }
         }
       }
@@ -113,6 +119,9 @@
           },
           "ModifiedBy": {
             "S": "adam"
+          },
+          "IsDeleted": {
+            "BOOL": false
           }
         }
       }
@@ -152,6 +161,9 @@
           },
           "ModifiedBy": {
             "S": "bob"
+          },
+          "IsDeleted": {
+            "BOOL": false
           }
         }
       }
@@ -191,6 +203,9 @@
           },
           "ModifiedBy": {
             "S": "bob"
+          },
+          "IsDeleted": {
+            "BOOL": false
           }
         }
       }
@@ -230,6 +245,9 @@
           },
           "ModifiedBy": {
             "S": "bob"
+          },
+          "IsDeleted": {
+            "BOOL": false
           }
         }
       }
@@ -269,6 +287,9 @@
           },
           "ModifiedBy": {
             "S": "charlie"
+          },
+          "IsDeleted": {
+            "BOOL": false
           }
         }
       }
@@ -308,6 +329,9 @@
           },
           "ModifiedBy": {
             "S": "charlie"
+          },
+          "IsDeleted": {
+            "BOOL": false
           }
         }
       }
@@ -347,6 +371,9 @@
           },
           "ModifiedBy": {
             "S": "charlie"
+          },
+          "IsDeleted": {
+            "BOOL": false
           }
         }
       }
