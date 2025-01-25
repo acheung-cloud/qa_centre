@@ -438,3 +438,138 @@ resource "aws_appsync_resolver" "mutation_loginUser" {
 }
 
 # appsync: ~User
+
+# appsync: Parti
+resource "aws_appsync_resolver" "query_getPartis" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Query"
+  field       = "getPartis"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Query.getPartis.js")
+}
+
+resource "aws_appsync_resolver" "mutation_createParti" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "createParti"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.createParti.js")
+}
+
+resource "aws_appsync_resolver" "mutation_updateParti" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "updateParti"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.updateParti.js")
+}
+
+# appsync: ~Parti
+
+# appsync: ResponseLog
+resource "aws_appsync_resolver" "query_getResponseLogs" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Query"
+  field       = "getResponseLogs"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Query.getResponseLogs.js")
+}
+
+resource "aws_appsync_resolver" "mutation_createResponseLog" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "createResponseLog"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.createResponseLog.js")
+}
+
+resource "aws_appsync_resolver" "mutation_updateResponseLog" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "updateResponseLog"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.updateResponseLog.js")
+}
+
+# appsync: ~ResponseLog
+
+# appsync: SessionScore
+resource "aws_appsync_resolver" "query_getSessionScores" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Query"
+  field       = "getSessionScores"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Query.getSessionScores.js")
+}
+
+resource "aws_appsync_resolver" "mutation_createSessionScore" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "createSessionScore"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.createSessionScore.js")
+}
+
+resource "aws_appsync_resolver" "mutation_updateSessionScore" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "updateSessionScore"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.updateSessionScore.js")
+}
+
+# appsync: ~SessionScore
