@@ -23,14 +23,18 @@ type Query {
     @aws_iam
 
   getSessions(GroupID: String!, Num: Int, NextToken: String): SessionConnection
-    @aws_auth
     @aws_iam
+    @aws_auth
 
   getQuestions(GroupID: String!, SessionID: String!, Num: Int, NextToken: String): QuestionConnection
     @aws_auth
     @aws_iam
 
   getAnsOptions(GroupID: String!, SessionID: String!, QuestionID: String!, Num: Int, NextToken: String): AnsOptionConnection
+    @aws_auth
+    @aws_iam
+
+  getUsers(Num: Int, NextToken: String): UserConnection
     @aws_auth
     @aws_iam
 
@@ -80,6 +84,12 @@ type Mutation {
   updateAnsOption(input: UpdateAnsOptionInput!): AnsOption
     @aws_iam
     @aws_auth
+
+  createUser(input: CreateUserInput!): User @aws_auth @aws_iam
+
+  updateUser(input: UpdateUserInput!): User @aws_auth @aws_iam
+
+  loginUser(Email: String!): User @aws_auth @aws_iam
 }
 
 type Subscription {
@@ -275,3 +285,34 @@ input UpdateAnsOptionInput {
 }
 
 # ~AnsOption
+
+# User
+type User {
+  Name: String! @aws_iam @aws_auth
+  Email: String! @aws_iam @aws_auth
+  LoginDT: AWSDateTime! @aws_iam @aws_auth
+  Created: AWSDateTime! @aws_iam @aws_auth
+  Modified: AWSDateTime! @aws_iam @aws_auth
+  CreatedBy: String! @aws_iam @aws_auth
+  ModifiedBy: String! @aws_iam @aws_auth
+  Status: String! @aws_iam @aws_auth
+}
+
+type UserConnection {
+  NextToken: String @aws_iam @aws_auth
+  Users: [User] @aws_iam @aws_auth
+}
+
+input CreateUserInput {
+  Name: String!
+  Email: String!
+  LoginDT: AWSDateTime!
+}
+
+input UpdateUserInput {
+  Email: String!
+  Name: String
+  Status: String
+}
+
+# ~User

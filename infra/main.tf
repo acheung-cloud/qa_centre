@@ -379,3 +379,62 @@ resource "aws_appsync_resolver" "mutation_updateAnsOption" {
 }
 
 # appsync: ~AnsOption
+
+# appsync: User
+resource "aws_appsync_resolver" "query_getUsers" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Query"
+  field       = "getUsers"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Query.getUsers.js")
+}
+
+resource "aws_appsync_resolver" "mutation_createUser" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "createUser"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.createUser.js")
+}
+
+resource "aws_appsync_resolver" "mutation_updateUser" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "updateUser"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.updateUser.js")
+}
+
+resource "aws_appsync_resolver" "mutation_loginUser" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "loginUser"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.loginUser.js")
+}
+
+# appsync: ~User
