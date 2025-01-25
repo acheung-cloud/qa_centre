@@ -45,7 +45,7 @@ export function request(ctx) {
             CreatedBy: { S: user },
             Modified: { S: timestamp },
             ModifiedBy: { S: user },
-            IsDeleted: { BOOL: false }
+            Status: { S: 'Active' }
         },
         condition: {
             expression: 'attribute_not_exists(PK) AND attribute_not_exists(SK)'
@@ -54,17 +54,21 @@ export function request(ctx) {
 }
 
 export function response(ctx) {
+    if (ctx.error) {
+        util.error(ctx.error.message, ctx.error.type);
+    }
+
     const result = ctx.result;
     return {
-        EntityID: result.EntityID.S,
-        GroupID: result.GroupID.S,
-        SessionID: result.SessionID.S,
-        SessionName: result.SessionName.S,
-        SessionDescription: result.SessionDescription.S,
-        Created: result.Created.S,
-        Modified: result.Modified.S,
-        CreatedBy: result.CreatedBy.S,
-        ModifiedBy: result.ModifiedBy.S,
-        IsDeleted: result.IsDeleted ? result.IsDeleted.BOOL : false
+        EntityID: result.EntityID,
+        GroupID: result.GroupID,
+        SessionID: result.SessionID,
+        SessionName: result.SessionName,
+        SessionDescription: result.SessionDescription,
+        Created: result.Created,
+        Modified: result.Modified,
+        CreatedBy: result.CreatedBy,
+        ModifiedBy: result.ModifiedBy,
+        Status: result.Status || 'Active'
     };
 }

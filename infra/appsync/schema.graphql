@@ -29,18 +29,26 @@ type Query {
 }
 
 type Mutation {
-  createEntity(input: CreateEntityInput): Entity
+  createEntity(input: CreateEntityInput!): Entity
     @aws_iam 
     @aws_auth
 
-  createGroup(input: CreateGroupInput): Group
+  updateEntity(input: UpdateEntityInput!): Entity
+    @aws_iam 
+    @aws_auth
+
+  createGroup(input: CreateGroupInput!): Group
     @aws_iam
     @aws_auth
 
-  createSession(input: CreateSessionInput): Session
+  updateGroup(input: UpdateGroupInput!): Group
     @aws_iam
     @aws_auth
 
+  createSession(input: CreateSessionInput!): Session
+    @aws_iam
+    @aws_auth
+  
   # Allow both authenticated users and IAM
   startPageTransition(page: String!): String!
     @aws_auth
@@ -61,7 +69,7 @@ type Entity {
   Modified: AWSDateTime! @aws_iam @aws_auth
   CreatedBy: String! @aws_iam @aws_auth
   ModifiedBy: String! @aws_iam @aws_auth
-  IsDeleted: Boolean! @aws_iam @aws_auth
+  Status: String! @aws_iam @aws_auth
 }
 
 type EntityConnection {
@@ -70,7 +78,13 @@ type EntityConnection {
 }
 
 input CreateEntityInput {
-  EntityName: String! @aws_iam @aws_auth
+  EntityName: String!
+}
+
+input UpdateEntityInput {
+  EntityID: String!
+  EntityName: String
+  Status: String
 }
 
 # ~Entity
@@ -85,7 +99,7 @@ type Group {
   Modified: AWSDateTime! @aws_iam @aws_auth
   CreatedBy: String! @aws_iam @aws_auth
   ModifiedBy: String! @aws_iam @aws_auth
-  IsDeleted: Boolean! @aws_iam @aws_auth
+  Status: String! @aws_iam @aws_auth
 }
 
 type GroupConnection {
@@ -94,9 +108,17 @@ type GroupConnection {
 }
 
 input CreateGroupInput {
-  EntityID: String! @aws_iam @aws_auth
-  GroupName: String! @aws_iam @aws_auth
-  Description: String @aws_iam @aws_auth
+  EntityID: String!
+  GroupName: String!
+  Description: String
+}
+
+input UpdateGroupInput {
+  EntityID: String!
+  GroupID: String!
+  GroupName: String
+  Description: String
+  Status: String
 }
 
 # ~Group
@@ -109,22 +131,22 @@ type Session {
   SessionName: String! @aws_iam @aws_auth
   SessionDescription: String @aws_iam @aws_auth
   Created: AWSDateTime! @aws_iam @aws_auth
-  Modified: AWSDateTime @aws_iam @aws_auth
+  Modified: AWSDateTime! @aws_iam @aws_auth
   CreatedBy: String! @aws_iam @aws_auth
-  ModifiedBy: String @aws_iam @aws_auth
-  IsDeleted: Boolean! @aws_iam @aws_auth
+  ModifiedBy: String! @aws_iam @aws_auth
+  Status: String! @aws_iam @aws_auth
 }
 
 type SessionConnection {
-  NextToken: String @aws_iam @aws_auth
-  Sessions: [Session] @aws_iam @aws_auth
+  NextToken: String
+  Sessions: [Session]
 }
 
 input CreateSessionInput {
-  EntityID: String! @aws_iam @aws_auth
-  GroupID: String! @aws_iam @aws_auth
-  SessionName: String! @aws_iam @aws_auth
-  SessionDescription: String @aws_iam @aws_auth
+  EntityID: String!
+  GroupID: String!
+  SessionName: String!
+  SessionDescription: String
 }
 
 # ~Session

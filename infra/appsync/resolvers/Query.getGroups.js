@@ -40,7 +40,7 @@ export function response(ctx) {
         Modified: item["Modified"],
         CreatedBy: item["CreatedBy"],
         ModifiedBy: item["ModifiedBy"],
-        IsDeleted: item["IsDeleted"] ? item["IsDeleted"] : false
+        Status: item["Status"] || 'Active'
     }));
 
     return {

@@ -197,6 +197,20 @@ resource "aws_appsync_resolver" "mutation_createEntity" {
   code = file("appsync/resolvers/Mutation.createEntity.js")
 }
 
+resource "aws_appsync_resolver" "mutation_updateEntity" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "updateEntity"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.updateEntity.js")
+}
+
 # appsync: ~Entity
 
 # appsync: Group
@@ -226,6 +240,20 @@ resource "aws_appsync_resolver" "mutation_createGroup" {
   }
 
   code = file("appsync/resolvers/Mutation.createGroup.js")
+}
+
+resource "aws_appsync_resolver" "mutation_updateGroup" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "updateGroup"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.updateGroup.js")
 }
 
 # appsync: ~Group

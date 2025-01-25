@@ -32,16 +32,16 @@ export function response(ctx) {
 
     const items = ctx.result.items || [];
     const sessions = items.map(item => ({
-        EntityID: item.EntityID.S,
-        GroupID: item.GroupID.S,
-        SessionID: item.SessionID.S,
-        SessionName: item.SessionName.S,
-        SessionDescription: item.SessionDescription.S,
-        Created: item.Created.S,
-        Modified: item.Modified.S,
-        CreatedBy: item.CreatedBy.S,
-        ModifiedBy: item.ModifiedBy.S,
-        IsDeleted: item.IsDeleted ? item.IsDeleted.BOOL : false
+        EntityID: item["EntityID"],
+        GroupID: item["GroupID"],
+        SessionID: item["SessionID"],
+        SessionName: item["SessionName"],
+        SessionDescription: item["SessionDescription"],
+        Created: item["Created"],
+        Modified: item["Modified"],
+        CreatedBy: item["CreatedBy"],
+        ModifiedBy: item["ModifiedBy"],
+        Status: item["Status"] || 'Active'
     }));
 
     return {

@@ -46,7 +46,7 @@ export function response(ctx) {
             Modified: item["Modified"],
             CreatedBy: item["CreatedBy"],
             ModifiedBy: item["ModifiedBy"],
-            IsDeleted: item["IsDeleted"] ? item["IsDeleted"] : false
+            Status: item["Status"] || 'Active'
         });
 
     });
@@ -55,9 +55,4 @@ export function response(ctx) {
         NextToken: ctx.result.nextToken,
         Entities: entities
     };
-
-    // return {
-    //     NextToken: ctx.result.nextToken,
-    //     Entities: ctx.result.items
-    // };
 }

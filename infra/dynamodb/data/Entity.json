@@ -29,6 +29,9 @@
           },
           "ModifiedBy": {
             "S": "adam"
+          },
+          "Status": {
+            "S": "Active"
           }
         }
       }
@@ -62,6 +65,9 @@
           },
           "ModifiedBy": {
             "S": "bob"
+          },
+          "Status": {
+            "S": "Active"
           }
         }
       }
@@ -95,6 +101,9 @@
           },
           "ModifiedBy": {
             "S": "bob"
+          },
+          "Status": {
+            "S": "Active"
           }
         }
       }

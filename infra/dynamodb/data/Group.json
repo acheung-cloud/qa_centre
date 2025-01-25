@@ -36,8 +36,8 @@
           "ModifiedBy": {
             "S": "adam"
           },
-          "IsDeleted": {
-            "BOOL": false
+          "Status": {
+            "S": "Active"
           }
         }
       }
@@ -78,8 +78,8 @@
           "ModifiedBy": {
             "S": "adam"
           },
-          "IsDeleted": {
-            "BOOL": false
+          "Status": {
+            "S": "Active"
           }
         }
       }
@@ -120,8 +120,8 @@
           "ModifiedBy": {
             "S": "adam"
           },
-          "IsDeleted": {
-            "BOOL": false
+          "Status": {
+            "S": "Active"
           }
         }
       }
@@ -162,8 +162,8 @@
           "ModifiedBy": {
             "S": "bob"
           },
-          "IsDeleted": {
-            "BOOL": false
+          "Status": {
+            "S": "Active"
           }
         }
       }
@@ -204,8 +204,8 @@
           "ModifiedBy": {
             "S": "bob"
           },
-          "IsDeleted": {
-            "BOOL": false
+          "Status": {
+            "S": "Active"
           }
         }
       }
@@ -246,8 +246,8 @@
           "ModifiedBy": {
             "S": "bob"
           },
-          "IsDeleted": {
-            "BOOL": false
+          "Status": {
+            "S": "Active"
           }
         }
       }
@@ -288,8 +288,8 @@
           "ModifiedBy": {
             "S": "charlie"
           },
-          "IsDeleted": {
-            "BOOL": false
+          "Status": {
+            "S": "Active"
           }
         }
       }
@@ -330,8 +330,8 @@
           "ModifiedBy": {
             "S": "charlie"
           },
-          "IsDeleted": {
-            "BOOL": false
+          "Status": {
+            "S": "Active"
           }
         }
       }
@@ -372,8 +372,8 @@
           "ModifiedBy": {
             "S": "charlie"
           },
-          "IsDeleted": {
-            "BOOL": false
+          "Status": {
+            "S": "Active"
           }
         }
       }

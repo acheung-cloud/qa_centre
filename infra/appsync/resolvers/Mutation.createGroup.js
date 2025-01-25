@@ -43,7 +43,7 @@ export function request(ctx) {
             CreatedBy: { S: user },
             Modified: { S: timestamp },
             ModifiedBy: { S: user },
-            IsDeleted: { BOOL: false }
+            Status: { S: 'Active' }
         },
         condition: {
             expression: 'attribute_not_exists(PK) AND attribute_not_exists(SK)'
