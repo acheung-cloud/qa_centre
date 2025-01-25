@@ -289,3 +289,93 @@ resource "aws_appsync_resolver" "query_getSessions" {
 }
 
 # appsync: ~Session
+
+# appsync: Question
+resource "aws_appsync_resolver" "query_getQuestions" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Query"
+  field       = "getQuestions"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Query.getQuestions.js")
+}
+
+resource "aws_appsync_resolver" "mutation_createQuestion" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "createQuestion"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.createQuestion.js")
+}
+
+resource "aws_appsync_resolver" "mutation_updateQuestion" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "updateQuestion"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.updateQuestion.js")
+}
+
+# appsync: ~Question
+
+# appsync: AnsOption
+resource "aws_appsync_resolver" "query_getAnsOptions" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Query"
+  field       = "getAnsOptions"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Query.getAnsOptions.js")
+}
+
+resource "aws_appsync_resolver" "mutation_createAnsOption" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "createAnsOption"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.createAnsOption.js")
+}
+
+resource "aws_appsync_resolver" "mutation_updateAnsOption" {
+  api_id      = aws_appsync_graphql_api.qa_centre.id
+  type        = "Mutation"
+  field       = "updateAnsOption"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  runtime {
+    name            = "APPSYNC_JS"
+    runtime_version = "1.0.0"
+  }
+
+  code = file("appsync/resolvers/Mutation.updateAnsOption.js")
+}
+
+# appsync: ~AnsOption

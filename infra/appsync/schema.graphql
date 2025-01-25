@@ -30,6 +30,10 @@ type Query {
     @aws_auth
     @aws_iam
 
+  getAnsOptions(GroupID: String!, SessionID: String!, QuestionID: String!, Num: Int, NextToken: String): AnsOptionConnection
+    @aws_auth
+    @aws_iam
+
 }
 
 type Mutation {
@@ -57,7 +61,6 @@ type Mutation {
     @aws_iam
     @aws_auth
   
-  # Allow both authenticated users and IAM
   startPageTransition(page: String!): String!
     @aws_auth
     @aws_iam
@@ -70,6 +73,13 @@ type Mutation {
     @aws_iam
     @aws_auth
   
+  createAnsOption(input: CreateAnsOptionInput!): AnsOption
+    @aws_iam
+    @aws_auth
+
+  updateAnsOption(input: UpdateAnsOptionInput!): AnsOption
+    @aws_iam
+    @aws_auth
 }
 
 type Subscription {
@@ -209,7 +219,6 @@ input CreateQuestionInput {
 }
 
 input UpdateQuestionInput {
-  EntityID: String!
   GroupID: String!
   SessionID: String!
   QuestionID: String!
@@ -221,3 +230,48 @@ input UpdateQuestionInput {
 }
 
 # ~Question
+
+# AnsOption
+type AnsOption {
+  EntityID: String! @aws_iam @aws_auth
+  AnsOptionID: String! @aws_iam @aws_auth
+  QuestionID: String! @aws_iam @aws_auth
+  SessionID: String! @aws_iam @aws_auth
+  GroupID: String! @aws_iam @aws_auth
+  AnsOption: String! @aws_iam @aws_auth
+  Correct: String! @aws_iam @aws_auth
+  Remark: String @aws_iam @aws_auth
+  Created: AWSDateTime! @aws_iam @aws_auth
+  Modified: AWSDateTime! @aws_iam @aws_auth
+  CreatedBy: String! @aws_iam @aws_auth
+  ModifiedBy: String! @aws_iam @aws_auth
+  Status: String! @aws_iam @aws_auth
+}
+
+type AnsOptionConnection {
+  NextToken: String @aws_iam @aws_auth
+  AnsOptions: [AnsOption] @aws_iam @aws_auth
+}
+
+input CreateAnsOptionInput {
+  EntityID: String!
+  GroupID: String!
+  SessionID: String!
+  QuestionID: String!
+  AnsOption: String!
+  Correct: String!
+  Remark: String
+}
+
+input UpdateAnsOptionInput {
+  GroupID: String!
+  SessionID: String!
+  QuestionID: String!
+  AnsOptionID: String!
+  AnsOption: String
+  Correct: String
+  Remark: String
+  Status: String
+}
+
+# ~AnsOption

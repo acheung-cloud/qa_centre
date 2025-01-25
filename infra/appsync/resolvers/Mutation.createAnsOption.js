@@ -21,18 +21,26 @@ function getTimestamp() {
     return util.time.nowISO8601();
 }
 
+function validateCorrect(value) {
+    const upperValue = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+    if (upperValue !== 'True' && upperValue !== 'False') {
+        util.error('Correct value must be either "True" or "False"', 'ValidationError');
+    }
+    return upperValue;
+}
+
 /**
  * Sends a request to the attached data source
  * @param {import('@aws-appsync/utils').Context} ctx the context
  * @returns {*} the request
  */
 export function request(ctx) {
-    const questionId = generateId();
+    const ansOptionId = generateId();
     const user = getUser(ctx);
     const timestamp = getTimestamp();
 
     const PK = `Group#${ctx.args.input.GroupID}`;
-    const SK = `Question#${ctx.args.input.SessionID}#${questionId}`;
+    const SK = `AnsOption#${ctx.args.input.SessionID}#${ctx.args.input.QuestionID}#${ansOptionId}`;
 
     return {
         version: "2018-05-29",
@@ -42,15 +50,15 @@ export function request(ctx) {
             SK: { S: SK }
         },
         attributeValues: {
-            _Type: { S: 'Question' },
+            _Type: { S: 'AnsOption' },
             EntityID: { S: ctx.args.input.EntityID },
-            QuestionID: { S: questionId },
+            AnsOptionID: { S: ansOptionId },
+            QuestionID: { S: ctx.args.input.QuestionID },
             SessionID: { S: ctx.args.input.SessionID },
             GroupID: { S: ctx.args.input.GroupID },
-            Question: { S: ctx.args.input.Question },
+            AnsOption: { S: ctx.args.input.AnsOption },
+            Correct: { S: validateCorrect(ctx.args.input.Correct) },
             Remark: { S: ctx.args.input.Remark || '' },
-            Duration: { N: ctx.args.input.Duration },
-            Order: { N: ctx.args.input.Order },
             Created: { S: timestamp },
             CreatedBy: { S: user },
             Modified: { S: timestamp },
@@ -76,13 +84,13 @@ export function response(ctx) {
     const result = ctx.result;
     return {
         EntityID: result.EntityID.S,
+        AnsOptionID: result.AnsOptionID.S,
         QuestionID: result.QuestionID.S,
         SessionID: result.SessionID.S,
         GroupID: result.GroupID.S,
-        Question: result.Question.S,
+        AnsOption: result.AnsOption.S,
+        Correct: result.Correct.S,
         Remark: result.Remark.S,
-        Duration: result.Duration.N,
-        Order: result.Order.N,
         Created: result.Created.S,
         Modified: result.Modified.S,
         CreatedBy: result.CreatedBy.S,

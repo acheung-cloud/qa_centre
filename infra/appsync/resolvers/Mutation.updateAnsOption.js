@@ -15,6 +15,14 @@ function getTimestamp() {
     return util.time.nowISO8601();
 }
 
+function validateCorrect(value) {
+    const upperValue = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+    if (upperValue !== 'True' && upperValue !== 'False') {
+        util.error('Correct value must be either "True" or "False"', 'ValidationError');
+    }
+    return upperValue;
+}
+
 /**
  * Sends a request to the attached data source
  * @param {import('@aws-appsync/utils').Context} ctx the context
@@ -25,7 +33,7 @@ export function request(ctx) {
     const timestamp = getTimestamp();
 
     const PK = `Group#${ctx.args.input.GroupID}`;
-    const SK = `Question#${ctx.args.input.SessionID}#${ctx.args.input.QuestionID}`;
+    const SK = `AnsOption#${ctx.args.input.SessionID}#${ctx.args.input.QuestionID}#${ctx.args.input.AnsOptionID}`;
 
     // Initialize update expression components
     const updateExpression = [];
@@ -36,10 +44,17 @@ export function request(ctx) {
     let hasChanges = false;
     
     // Only include fields that are provided in the input
-    if (ctx.args.input.Question) {
-        updateExpression.push('#question = :question');
-        expressionValues[':question'] = { S: ctx.args.input.Question };
-        expressionNames['#question'] = 'Question';
+    if (ctx.args.input.AnsOption) {
+        updateExpression.push('#ansOption = :ansOption');
+        expressionValues[':ansOption'] = { S: ctx.args.input.AnsOption };
+        expressionNames['#ansOption'] = 'AnsOption';
+        hasChanges = true;
+    }
+    
+    if (ctx.args.input.Correct) {
+        updateExpression.push('#correct = :correct');
+        expressionValues[':correct'] = { S: validateCorrect(ctx.args.input.Correct) };
+        expressionNames['#correct'] = 'Correct';
         hasChanges = true;
     }
     
@@ -47,20 +62,6 @@ export function request(ctx) {
         updateExpression.push('#remark = :remark');
         expressionValues[':remark'] = { S: ctx.args.input.Remark };
         expressionNames['#remark'] = 'Remark';
-        hasChanges = true;
-    }
-    
-    if (ctx.args.input.Duration) {
-        updateExpression.push('#duration = :duration');
-        expressionValues[':duration'] = { N: ctx.args.input.Duration };
-        expressionNames['#duration'] = 'Duration';
-        hasChanges = true;
-    }
-    
-    if (ctx.args.input.Order) {
-        updateExpression.push('#order = :order');
-        expressionValues[':order'] = { N: ctx.args.input.Order };
-        expressionNames['#order'] = 'Order';
         hasChanges = true;
     }
     
@@ -115,13 +116,13 @@ export function response(ctx) {
     const result = ctx.result;
     return {
         EntityID: result.EntityID,
+        AnsOptionID: result.AnsOptionID,
         QuestionID: result.QuestionID,
         SessionID: result.SessionID,
         GroupID: result.GroupID,
-        Question: result.Question,
+        AnsOption: result.AnsOption,
+        Correct: result.Correct,
         Remark: result.Remark,
-        Duration: result.Duration.N,
-        Order: result.Order.N,
         Created: result.Created,
         Modified: result.Modified,
         CreatedBy: result.CreatedBy,

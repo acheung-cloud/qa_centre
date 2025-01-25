@@ -13,7 +13,7 @@ export function request(ctx) {
             expression: "PK = :pk AND begins_with(SK, :sk)",
             expressionValues: {
                 ":pk": { S: `Group#${ctx.args.GroupID}` },
-                ":sk": { S: `Question#${ctx.args.SessionID}#` }
+                ":sk": { S: `AnsOption#${ctx.args.SessionID}#${ctx.args.QuestionID}#` }
             }
         },
         scanIndexForward: false,
@@ -33,15 +33,15 @@ export function response(ctx) {
     }
 
     const items = ctx.result.items || [];
-    const questions = items.map(item => ({
+    const ansOptions = items.map(item => ({
         EntityID: item["EntityID"],
+        AnsOptionID: item["AnsOptionID"],
         QuestionID: item["QuestionID"],
         SessionID: item["SessionID"],
         GroupID: item["GroupID"],
-        Question: item["Question"],
+        AnsOption: item["AnsOption"],
+        Correct: item["Correct"],
         Remark: item["Remark"],
-        Duration: item["Duration"].N,
-        Order: item["Order"].N,
         Created: item["Created"],
         Modified: item["Modified"],
         CreatedBy: item["CreatedBy"],
@@ -51,6 +51,6 @@ export function response(ctx) {
 
     return {
         NextToken: ctx.result.nextToken,
-        Questions: questions
+        AnsOptions: ansOptions
     };
 }

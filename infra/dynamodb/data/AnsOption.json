@@ -31,7 +31,7 @@
             "S": "TOGAF is process-focused with iterative ADM cycles, while Zachman is a structured classification framework using a 6x6 matrix. TOGAF provides detailed implementation guidance, whereas Zachman focuses on enterprise architecture taxonomy and classification."
           },
           "Correct": {
-            "BOOL": true
+            "S": "True"
           },
           "Remark": {
             "S": "This highlights the key methodological differences between the frameworks"
@@ -82,7 +82,7 @@
             "S": "Both frameworks are primarily focused on implementation processes, with TOGAF emphasizing documentation and Zachman focusing on technical deployment. Neither framework provides architectural classification schemes."
           },
           "Correct": {
-            "BOOL": false
+            "S": "False"
           },
           "Remark": {
             "S": "This answer incorrectly characterizes both frameworks' primary focuses"
@@ -133,7 +133,7 @@
             "S": "Zachman framework is more modern and agile, focusing on rapid implementation, while TOGAF is an older framework that emphasizes documentation over practical application."
           },
           "Correct": {
-            "BOOL": false
+            "S": "False"
           },
           "Remark": {
             "S": "This answer incorrectly describes the historical context and purposes of both frameworks"
@@ -184,7 +184,7 @@
             "S": "TOGAF and Zachman are identical frameworks with different names, both using the same approach to enterprise architecture with no significant methodological differences."
           },
           "Correct": {
-            "BOOL": false
+            "S": "False"
           },
           "Remark": {
             "S": "This answer incorrectly suggests the frameworks are identical"
@@ -235,7 +235,7 @@
             "S": "The four main domains are Business, Data, Application, and Technology Architecture, forming a hierarchical structure where each domain builds upon and aligns with the others to create a comprehensive enterprise architecture."
           },
           "Correct": {
-            "BOOL": true
+            "S": "True"
           },
           "Remark": {
             "S": "This correctly identifies and describes the relationship between the four main ADM domains"
@@ -286,7 +286,7 @@
             "S": "The four domains are Development, Testing, Deployment, and Maintenance, representing the software development lifecycle in TOGAF ADM."
           },
           "Correct": {
-            "BOOL": false
+            "S": "False"
           },
           "Remark": {
             "S": "This incorrectly describes SDLC phases instead of ADM architecture domains"
@@ -337,7 +337,7 @@
             "S": "The four domains are Requirements, Design, Implementation, and Governance, focusing solely on the technical aspects of enterprise architecture."
           },
           "Correct": {
-            "BOOL": false
+            "S": "False"
           },
           "Remark": {
             "S": "This incorrectly mixes project phases with architecture domains"
@@ -388,7 +388,7 @@
             "S": "The four domains are Strategy, Security, Infrastructure, and Operations, representing the operational aspects of enterprise architecture."
           },
           "Correct": {
-            "BOOL": false
+            "S": "False"
           },
           "Remark": {
             "S": "This incorrectly focuses on operational aspects rather than architectural domains"
