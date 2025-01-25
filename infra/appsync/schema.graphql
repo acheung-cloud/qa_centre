@@ -26,6 +26,10 @@ type Query {
     @aws_auth
     @aws_iam
 
+  getQuestions(GroupID: String!, SessionID: String!, Num: Int, NextToken: String): QuestionConnection
+    @aws_auth
+    @aws_iam
+
 }
 
 type Mutation {
@@ -57,6 +61,14 @@ type Mutation {
   startPageTransition(page: String!): String!
     @aws_auth
     @aws_iam
+  
+  createQuestion(input: CreateQuestionInput!): Question
+    @aws_iam
+    @aws_auth
+
+  updateQuestion(input: UpdateQuestionInput!): Question
+    @aws_iam
+    @aws_auth
   
 }
 
@@ -163,3 +175,49 @@ input UpdateSessionInput {
 }
 
 # ~Session
+
+# Question
+type Question {
+  EntityID: String! @aws_iam @aws_auth
+  QuestionID: String! @aws_iam @aws_auth
+  SessionID: String! @aws_iam @aws_auth
+  GroupID: String! @aws_iam @aws_auth
+  Question: String! @aws_iam @aws_auth
+  Remark: String @aws_iam @aws_auth
+  Duration: Int! @aws_iam @aws_auth
+  Order: Int! @aws_iam @aws_auth
+  Created: AWSDateTime! @aws_iam @aws_auth
+  Modified: AWSDateTime! @aws_iam @aws_auth
+  CreatedBy: String! @aws_iam @aws_auth
+  ModifiedBy: String! @aws_iam @aws_auth
+  Status: String! @aws_iam @aws_auth
+}
+
+type QuestionConnection {
+  NextToken: String @aws_iam @aws_auth
+  Questions: [Question] @aws_iam @aws_auth
+}
+
+input CreateQuestionInput {
+  EntityID: String!
+  GroupID: String!
+  SessionID: String!
+  Question: String!
+  Remark: String
+  Duration: Int!
+  Order: Int!
+}
+
+input UpdateQuestionInput {
+  EntityID: String!
+  GroupID: String!
+  SessionID: String!
+  QuestionID: String!
+  Question: String
+  Remark: String
+  Duration: Int
+  Order: Int
+  Status: String
+}
+
+# ~Question

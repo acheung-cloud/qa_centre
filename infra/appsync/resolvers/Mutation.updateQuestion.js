@@ -25,7 +25,7 @@ export function request(ctx) {
     const timestamp = getTimestamp();
 
     const PK = `Group#${ctx.args.input.GroupID}`;
-    const SK = `Session#${ctx.args.input.SessionID}`;
+    const SK = `Question#${ctx.args.input.SessionID}#${ctx.args.input.QuestionID}`;
 
     // Initialize update expression components
     const updateExpression = [];
@@ -36,17 +36,31 @@ export function request(ctx) {
     let hasChanges = false;
     
     // Only include fields that are provided in the input
-    if (ctx.args.input.SessionName) {
-        updateExpression.push('#name = :name');
-        expressionValues[':name'] = { S: ctx.args.input.SessionName };
-        expressionNames['#name'] = 'SessionName';
+    if (ctx.args.input.Question) {
+        updateExpression.push('#question = :question');
+        expressionValues[':question'] = { S: ctx.args.input.Question };
+        expressionNames['#question'] = 'Question';
         hasChanges = true;
     }
     
-    if (ctx.args.input.SessionDescription) {
-        updateExpression.push('#desc = :desc');
-        expressionValues[':desc'] = { S: ctx.args.input.SessionDescription };
-        expressionNames['#desc'] = 'SessionDescription';
+    if (ctx.args.input.Remark) {
+        updateExpression.push('#remark = :remark');
+        expressionValues[':remark'] = { S: ctx.args.input.Remark };
+        expressionNames['#remark'] = 'Remark';
+        hasChanges = true;
+    }
+    
+    if ('Duration' in ctx.args.input) {
+        updateExpression.push('#duration = :duration');
+        expressionValues[':duration'] = { N: ctx.args.input.Duration.toString() };
+        expressionNames['#duration'] = 'Duration';
+        hasChanges = true;
+    }
+    
+    if ('Order' in ctx.args.input) {
+        updateExpression.push('#order = :order');
+        expressionValues[':order'] = { N: ctx.args.input.Order.toString() };
+        expressionNames['#order'] = 'Order';
         hasChanges = true;
     }
     
@@ -101,10 +115,13 @@ export function response(ctx) {
     const result = ctx.result;
     return {
         EntityID: result.EntityID,
-        GroupID: result.GroupID,
+        QuestionID: result.QuestionID,
         SessionID: result.SessionID,
-        SessionName: result.SessionName,
-        SessionDescription: result.SessionDescription,
+        GroupID: result.GroupID,
+        Question: result.Question,
+        Remark: result.Remark,
+        Duration: parseInt(result.Duration.N),
+        Order: parseInt(result.Order.N),
         Created: result.Created,
         Modified: result.Modified,
         CreatedBy: result.CreatedBy,
