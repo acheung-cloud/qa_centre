@@ -1,9 +1,9 @@
 {
   "auth": {
-    "user_pool_id": "ap-southeast-2_aShMzdeko",
+    "user_pool_id": "ap-southeast-2_seOhXGYQD",
     "aws_region": "ap-southeast-2",
-    "user_pool_client_id": "7agob2kpf6c30vl0q1dq2g95er",
-    "identity_pool_id": "ap-southeast-2:f4cd18ee-beec-46d7-aa8e-0950c5ca7f45",
+    "user_pool_client_id": "4fo76v0t0k0r1tmp2o0bvhhg2q",
+    "identity_pool_id": "ap-southeast-2:3afa15d8-caff-4886-b35a-c629c77114a0",
     "mfa_methods": [],
     "standard_required_attributes": [
       "email"
@@ -14,6 +14,7 @@
     "user_verification_types": [
       "email"
     ],
+    "groups": [],
     "mfa_configuration": "NONE",
     "password_policy": {
       "min_length": 8,
@@ -25,19 +26,19 @@
     "unauthenticated_identities_enabled": true
   },
   "data": {
-    "url": "https://scq5tnelcvhuxpfsnkdwlrhhem.appsync-api.ap-southeast-2.amazonaws.com/graphql",
+    "url": "https://ypmbszx2tbaprjjhynyh7vosfq.appsync-api.ap-southeast-2.amazonaws.com/graphql",
     "aws_region": "ap-southeast-2",
-    "api_key": "da2-avqi4spoffggllmu44kejxwv6u",
-    "default_authorization_type": "API_KEY",
+    "api_key": "da2-xdu6t5xjbvh73kqdq3yfoxrvqe",
+    "default_authorization_type": "AMAZON_COGNITO_USER_POOLS",
     "authorization_types": [
-      "AMAZON_COGNITO_USER_POOLS",
+      "API_KEY",
       "AWS_IAM"
     ],
     "model_introspection": {
       "version": 1,
       "models": {
-        "Todo": {
-          "name": "Todo",
+        "Entity": {
+          "name": "Entity",
           "fields": {
             "id": {
               "name": "id",
@@ -46,8 +47,47 @@
               "isRequired": true,
               "attributes": []
             },
-            "content": {
-              "name": "content",
+            "groups": {
+              "name": "groups",
+              "isArray": true,
+              "type": {
+                "model": "Group"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true,
+              "association": {
+                "connectionType": "HAS_MANY",
+                "associatedWith": [
+                  "entityId"
+                ]
+              }
+            },
+            "entityName": {
+              "name": "entityName",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "status": {
+              "name": "status",
+              "isArray": false,
+              "type": {
+                "enum": "Status"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "createdBy": {
+              "name": "createdBy",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "modifiedBy": {
+              "name": "modifiedBy",
               "isArray": false,
               "type": "String",
               "isRequired": false,
@@ -71,7 +111,7 @@
             }
           },
           "syncable": true,
-          "pluralName": "Todos",
+          "pluralName": "Entities",
           "attributes": [
             {
               "type": "model",
@@ -81,6 +121,141 @@
               "type": "auth",
               "properties": {
                 "rules": [
+                  {
+                    "allow": "private",
+                    "operations": [
+                      "create",
+                      "update",
+                      "delete",
+                      "read"
+                    ]
+                  },
+                  {
+                    "allow": "public",
+                    "provider": "apiKey",
+                    "operations": [
+                      "create",
+                      "update",
+                      "delete",
+                      "read"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "primaryKeyInfo": {
+            "isCustomPrimaryKey": false,
+            "primaryKeyFieldName": "id",
+            "sortKeyFieldNames": []
+          }
+        },
+        "Group": {
+          "name": "Group",
+          "fields": {
+            "id": {
+              "name": "id",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "entityId": {
+              "name": "entityId",
+              "isArray": false,
+              "type": "ID",
+              "isRequired": true,
+              "attributes": []
+            },
+            "entity": {
+              "name": "entity",
+              "isArray": false,
+              "type": {
+                "model": "Entity"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "association": {
+                "connectionType": "BELONGS_TO",
+                "targetNames": [
+                  "entityId"
+                ]
+              }
+            },
+            "groupName": {
+              "name": "groupName",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "status": {
+              "name": "status",
+              "isArray": false,
+              "type": {
+                "enum": "Status"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "description": {
+              "name": "description",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "createdBy": {
+              "name": "createdBy",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "modifiedBy": {
+              "name": "modifiedBy",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
+            "createdAt": {
+              "name": "createdAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            },
+            "updatedAt": {
+              "name": "updatedAt",
+              "isArray": false,
+              "type": "AWSDateTime",
+              "isRequired": false,
+              "attributes": [],
+              "isReadOnly": true
+            }
+          },
+          "syncable": true,
+          "pluralName": "Groups",
+          "attributes": [
+            {
+              "type": "model",
+              "properties": {}
+            },
+            {
+              "type": "auth",
+              "properties": {
+                "rules": [
+                  {
+                    "allow": "private",
+                    "operations": [
+                      "create",
+                      "update",
+                      "delete",
+                      "read"
+                    ]
+                  },
                   {
                     "allow": "public",
                     "provider": "apiKey",
@@ -102,9 +277,17 @@
           }
         }
       },
-      "enums": {},
+      "enums": {
+        "Status": {
+          "name": "Status",
+          "values": [
+            "active",
+            "inactive"
+          ]
+        }
+      },
       "nonModels": {}
     }
   },
-  "version": "1.1"
+  "version": "1.3"
 }

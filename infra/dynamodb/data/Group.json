@@ -1,5 +1,5 @@
 {
-  "qa_centre_table": [
+  "TABLE_NAME": [
     {
       "PutRequest": {
         "Item": {

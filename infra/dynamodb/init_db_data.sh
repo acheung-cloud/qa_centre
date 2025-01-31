@@ -2,6 +2,9 @@
 
 # call this script like so:
 # bash init_db_data.sh qa_centre_table ap-southeast-2
+# bash init_db_data.sh QACentre-pcmp54jhqnf7zbo2jwj7ngjrw4-NONE ap-southeast-2
+
+
 
 # Get the directory where the script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -20,29 +23,36 @@ echo ">>>>> Initializing data in table $TABLE_NAME in region $REGION"
 # Configure AWS CLI with the specified region
 aws configure set default.region $REGION
 
+# Create temporary copies of json files with the table name replaced
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/Entity.json" > "${SCRIPT_DIR}/data/Entity.tmp.json"
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/Group.json" > "${SCRIPT_DIR}/data/Group.tmp.json"
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/Session.json" > "${SCRIPT_DIR}/data/Session.tmp.json"
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/Question.json" > "${SCRIPT_DIR}/data/Question.tmp.json"
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/AnsOption.json" > "${SCRIPT_DIR}/data/AnsOption.tmp.json"
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/User.json" > "${SCRIPT_DIR}/data/User.tmp.json"
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/Parti.json" > "${SCRIPT_DIR}/data/Parti.tmp.json"
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/ResponseLog.json" > "${SCRIPT_DIR}/data/ResponseLog.tmp.json"
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/SessionScore.json" > "${SCRIPT_DIR}/data/SessionScore.tmp.json"
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/QALog.json" > "${SCRIPT_DIR}/data/QALog.tmp.json"
+sed "s/TABLE_NAME/$TABLE_NAME/g" "${SCRIPT_DIR}/data/OpLog.json" > "${SCRIPT_DIR}/data/OpLog.tmp.json"
+
 # Execute batch-write-item
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Entity.json"
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Group.json"
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Session.json"
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Question.json"
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/AnsOption.json"
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/User.json"
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Parti.json"
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/ResponseLog.json"
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/SessionScore.json"
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/QALog.json"
-aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/OpLog.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Entity.tmp.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Group.tmp.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Session.tmp.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Question.tmp.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/AnsOption.tmp.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/User.tmp.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/Parti.tmp.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/ResponseLog.tmp.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/SessionScore.tmp.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/QALog.tmp.json"
+aws dynamodb batch-write-item --request-items "file://${SCRIPT_DIR}/data/OpLog.tmp.json"
 
-# for debug only
-aws dynamodb put-item \
-    --table-name $TABLE_NAME \
-    --item "file://${SCRIPT_DIR}/data/site.json"
-
-# Cleanup: Reset AWS CLI region setting if necessary
+# Reset AWS CLI region configuration
 aws configure set default.region ""
 
-echo "Data initialization complete!"
+# Clean up temporary files
+rm -f "${SCRIPT_DIR}"/data/*.tmp.json
 
-# Test commands
-# ./dynamodb/init_db_data.sh qa_centre_table ap-southeast-2
-# ./dynamodb/clean_db.sh qa_centre_table ap-southeast-2
+echo "Data initialization complete!"
