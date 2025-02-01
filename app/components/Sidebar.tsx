@@ -8,9 +8,7 @@ import { generateClient } from "aws-amplify/api";
 const client = generateClient<Schema>();
 
 interface SidebarProps {
-  entities: Array<Schema["Entity"]['type']>;
   selectedEntityId: string;
-  onEntityChange: (entityId: string) => void;
   groups: Array<Schema["Group"]['type']>;
   selectedGroupId: string;
   onGroupChange: (groupId: string) => void;
@@ -19,9 +17,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ 
-  entities, 
-  selectedEntityId, 
-  onEntityChange,
+  selectedEntityId,
   groups,
   selectedGroupId,
   onGroupChange,
@@ -29,34 +25,10 @@ export default function Sidebar({
   onGroupCreated
 }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isCreateEntityModalOpen, setIsCreateEntityModalOpen] = useState(false);
   const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
-  const [newEntityName, setNewEntityName] = useState('');
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-
-  const handleCreateEntity = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newEntityName.trim() || isCreating) return;
-
-    setIsCreating(true);
-    try {
-      const { data: newEntity } = await client.models.Entity.create({
-        name: newEntityName.trim()
-      });
-      setNewEntityName('');
-      setIsCreateEntityModalOpen(false);
-      onEntityCreated?.();
-      if (newEntity) {
-        onEntityChange(newEntity.id); // Auto-select the new entity
-      }
-    } catch (error) {
-      console.error('Error creating entity:', error);
-    } finally {
-      setIsCreating(false);
-    }
-  };
 
   const handleCreateGroup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,44 +81,6 @@ export default function Sidebar({
           className="fixed inset-0 bg-gray-600 bg-opacity-75 z-30 lg:hidden"
           onClick={() => setIsOpen(false)}
         />
-      )}
-
-      {/* Create Entity Modal */}
-      {isCreateEntityModalOpen && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <form onSubmit={handleCreateEntity}>
-              <div className="p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Create New Entity</h3>
-                <input
-                  type="text"
-                  value={newEntityName}
-                  onChange={(e) => setNewEntityName(e.target.value)}
-                  placeholder="Enter entity name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  disabled={isCreating}
-                />
-              </div>
-              <div className="bg-gray-50 px-6 py-3 flex justify-end gap-3 rounded-b-lg">
-                <button
-                  type="button"
-                  onClick={() => setIsCreateEntityModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
-                  disabled={isCreating}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50"
-                  disabled={isCreating || !newEntityName.trim()}
-                >
-                  {isCreating ? 'Creating...' : 'Create'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
       )}
 
       {/* Create Group Modal */}
@@ -202,39 +136,8 @@ export default function Sidebar({
         fixed inset-y-0 left-0 z-40 w-72 transform bg-gradient-to-b from-gray-900 to-gray-800 shadow-xl transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="flex h-16 shrink-0 items-center px-6 border-b border-gray-700">
+        <div className="flex items-center px-4 py-4 border-b border-gray-700">
           <h1 className="text-2xl font-bold text-white tracking-tight">QA Centre</h1>
-        </div>
-
-        {/* Entity Selection */}
-        <div className="px-4 py-4 border-b border-gray-700">
-          <div className="flex justify-between items-center mb-2">
-            <label htmlFor="entity-select" className="block text-sm font-medium text-gray-300">
-              Select Entity
-            </label>
-            <button
-              onClick={() => setIsCreateEntityModalOpen(true)}
-              className="text-sm text-gray-300 hover:text-white"
-            >
-              + New
-            </button>
-          </div>
-          <select
-            id="entity-select"
-            value={selectedEntityId}
-            onChange={(e) => {
-              onEntityChange(e.target.value);
-              setIsOpen(false);
-            }}
-            className="block w-full rounded-md border-gray-600 bg-gray-700 text-white py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-          >
-            <option value="">Select an entity...</option>
-            {entities.map((entity) => (
-              <option key={entity.id} value={entity.id}>
-                {entity.name}
-              </option>
-            ))}
-          </select>
         </div>
 
         {/* Group Selection */}
@@ -261,7 +164,6 @@ export default function Sidebar({
             className="block w-full rounded-md border-gray-600 bg-gray-700 text-white py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
             disabled={!selectedEntityId}
           >
-            <option value="">Select a group...</option>
             {groups.map((group) => (
               <option key={group.id} value={group.id}>
                 {group.name}

@@ -3,13 +3,17 @@
 import { AuthUser } from '@aws-amplify/auth';
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
+import type { Schema } from "@/amplify/data/resource";
 
 interface HeaderProps {
   signOut?: () => void;
   user?: AuthUser;
+  entities?: Array<Schema["Entity"]['type']>;
+  selectedEntityId: string;
+  onEntityChange: (entityId: string) => void;
 }
 
-export default function AdminHeader({ signOut, user }: HeaderProps) {
+export default function AdminHeader({ signOut, user, entities = [], selectedEntityId, onEntityChange }: HeaderProps) {
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-8 shadow-sm">
       <div className="flex items-center gap-x-4">
@@ -38,9 +42,26 @@ export default function AdminHeader({ signOut, user }: HeaderProps) {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Menu.Items className="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div className="px-4 py-2 text-sm text-gray-900 border-b border-gray-200">
                 <div className="font-medium truncate">{user?.signInDetails?.loginId}</div>
+              </div>
+              <div className="px-4 py-2 border-b border-gray-200">
+                <label htmlFor="entity-select" className="block text-sm font-medium text-gray-700 mb-1">
+                  Select Entity
+                </label>
+                <select
+                  id="entity-select"
+                  value={selectedEntityId}
+                  onChange={(e) => onEntityChange(e.target.value)}
+                  className="block w-full rounded-md border-gray-300 py-1.5 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                >
+                  {entities?.map((entity) => (
+                    <option key={entity.id} value={entity.id}>
+                      {entity.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <Menu.Item>
                 {({ active }) => (

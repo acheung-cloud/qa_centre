@@ -3,10 +3,21 @@
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import AdminHeader from "./AdminHeader";
+import { useContext } from "react";
+import { AdminContext } from "../admin/adminContext";
 
 function CallHeader() {
   const { user, signOut } = useAuthenticator();
-  return <AdminHeader signOut={signOut} user={user} />;
+  const { entities, selectedEntityId, setSelectedEntityId } = useContext(AdminContext);
+  return (
+    <AdminHeader 
+      signOut={signOut} 
+      user={user} 
+      entities={entities}
+      selectedEntityId={selectedEntityId}
+      onEntityChange={setSelectedEntityId}
+    />
+  );
 }
 
 export default function AdminLayout({

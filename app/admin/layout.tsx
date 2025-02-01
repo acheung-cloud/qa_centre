@@ -11,7 +11,6 @@ import outputs from "@/amplify_outputs.json";
 import { AdminContext } from "./adminContext";
 import AdminLayout from "../components/AdminLayout";
 
-
 Amplify.configure(outputs);
 const client = generateClient<Schema>();
 
@@ -28,6 +27,10 @@ export default function Layout({
   async function listEntities() {
     const { data } = await client.models.Entity.list();
     setEntities(data);
+    // Automatically select the first entity if there is one and no entity is currently selected
+    if (data.length > 0 && !selectedEntityId) {
+      setSelectedEntityId(data[0].id);
+    }
   }
 
   async function fetchGroups(entityId: string) {
@@ -47,6 +50,10 @@ export default function Layout({
       const { data: groupsData } = await entity.groups();
       console.log('Found groups:', groupsData);
       setGroups(groupsData);
+      // Automatically select the first group if there is one
+      if (groupsData.length > 0) {
+        setSelectedGroupId(groupsData[0].id);
+      }
     } catch (error) {
       console.error('Error fetching groups:', error);
       setGroups([]);
