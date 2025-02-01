@@ -83,10 +83,17 @@ const Home: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState<Schema["Group"]["type"] | null>(null);
   const [selectedSession, setSelectedSession] = useState<Schema["Session"]["type"] | null>(null);
   const [selectedQuestion, setSelectedQuestion] = useState<Schema["Question"]["type"] | null>(null);
-  const [isLoading, setIsLoading] = useState({ 
-    group: false, 
+  const [isLoading, setIsLoading] = useState({
+    group: false,
     session: false,
     question: false 
+  });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [editedQuestion, setEditedQuestion] = useState({
+    question: '',
+    remark: '',
+    duration: ''
   });
 
   // Fetch group details when group ID changes
@@ -152,6 +159,29 @@ const Home: React.FC = () => {
     fetchQuestion();
   }, [selectedQuestionId]);
 
+  const handleUpdateQuestion = async () => {
+    if (!selectedQuestion || isUpdating) return;
+    
+    setIsUpdating(true);
+    try {
+      const { data: updatedQuestion } = await client.models.Question.update({
+        id: selectedQuestion.id,
+        question: editedQuestion.question.trim(),
+        remark: editedQuestion.remark.trim() || undefined,
+        duration: editedQuestion.duration ? parseInt(editedQuestion.duration) : undefined
+      });
+      
+      if (updatedQuestion) {
+        setSelectedQuestion(updatedQuestion);
+        setIsEditModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error updating question:', error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Group Information */}
@@ -188,6 +218,17 @@ const Home: React.FC = () => {
           title={selectedQuestion?.question || "Loading..."}
           emptyMessage="Select a question to view its details"
           isLoading={isLoading.question}
+          showEdit={!!selectedQuestion}
+          onEdit={() => {
+            if (selectedQuestion) {
+              setEditedQuestion({
+                question: selectedQuestion.question || '',
+                remark: selectedQuestion.remark || '',
+                duration: selectedQuestion.duration ? selectedQuestion.duration.toString() : ''
+              });
+              setIsEditModalOpen(true);
+            }
+          }}
         >
           {selectedQuestion && (
             <div className="text-sm text-gray-600">
@@ -199,6 +240,77 @@ const Home: React.FC = () => {
             </div>
           )}
         </InfoCard>
+      )}
+
+      {/* Edit Question Modal */}
+      {isEditModalOpen && selectedQuestion && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div className="p-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Edit Question</h3>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="question" className="block text-sm font-medium text-gray-700">
+                    Question
+                  </label>
+                  <textarea
+                    id="question"
+                    value={editedQuestion.question}
+                    onChange={(e) => setEditedQuestion(prev => ({ ...prev, question: e.target.value }))}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    rows={3}
+                    disabled={isUpdating}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="remark" className="block text-sm font-medium text-gray-700">
+                    Remark
+                  </label>
+                  <textarea
+                    id="remark"
+                    value={editedQuestion.remark}
+                    onChange={(e) => setEditedQuestion(prev => ({ ...prev, remark: e.target.value }))}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    rows={2}
+                    disabled={isUpdating}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="duration" className="block text-sm font-medium text-gray-700">
+                    Duration (seconds)
+                  </label>
+                  <input
+                    type="number"
+                    id="duration"
+                    value={editedQuestion.duration}
+                    onChange={(e) => setEditedQuestion(prev => ({ ...prev, duration: e.target.value }))}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    min="0"
+                    disabled={isUpdating}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-50 px-6 py-3 flex justify-end space-x-3 rounded-b-lg">
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                disabled={isUpdating}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleUpdateQuestion}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50"
+                disabled={isUpdating || !editedQuestion.question.trim()}
+              >
+                {isUpdating ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
