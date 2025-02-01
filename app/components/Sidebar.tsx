@@ -55,6 +55,7 @@ export default function Sidebar({
   const [newQuestion, setNewQuestion] = useState('');
   const [newQuestionRemark, setNewQuestionRemark] = useState('');
   const [newQuestionDuration, setNewQuestionDuration] = useState('');
+  const [newQuestionScore, setNewQuestionScore] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
   const handleCreateGroup = async (e: React.FormEvent) => {
@@ -123,11 +124,13 @@ export default function Sidebar({
         sessionId: selectedSessionId,
         remark: newQuestionRemark.trim() || undefined,
         duration: newQuestionDuration ? parseInt(newQuestionDuration) : undefined,
+        score: newQuestionScore ? parseInt(newQuestionScore) : undefined,
         order: maxOrder + 1
       });
       setNewQuestion('');
       setNewQuestionRemark('');
       setNewQuestionDuration('');
+      setNewQuestionScore('');
       setIsCreateQuestionModalOpen(false);
       onQuestionCreated?.();
       if (newQuestionData) {
@@ -286,6 +289,21 @@ export default function Sidebar({
                       value={newQuestionDuration}
                       onChange={(e) => setNewQuestionDuration(e.target.value)}
                       placeholder="Enter duration"
+                      className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                      disabled={isCreating}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="score" className="block text-sm font-medium text-gray-700">
+                      Score
+                    </label>
+                    <input
+                      id="score"
+                      type="number"
+                      min="0"
+                      value={newQuestionScore}
+                      onChange={(e) => setNewQuestionScore(e.target.value)}
+                      placeholder="Enter score"
                       className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                       disabled={isCreating}
                     />
