@@ -2,14 +2,14 @@
 
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import UserHeader from "./UserHeader";
+import AdminHeader from "./AdminHeader";
 
 function CallHeader() {
   const { user, signOut } = useAuthenticator();
-  return <UserHeader signOut={signOut} user={user} />;
+  return <AdminHeader signOut={signOut} user={user} />;
 }
 
-export default function UserLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;

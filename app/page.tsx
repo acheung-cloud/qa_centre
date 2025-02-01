@@ -1,28 +1,20 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import { Amplify } from "aws-amplify";
-import { generateClient } from "aws-amplify/api";
-import type { Schema } from "@/amplify/data/resource";
-import outputs from "@/amplify_outputs.json";
-import "@aws-amplify/ui-react/styles.css";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Amplify } from 'aws-amplify';
+import outputs from '@/amplify_outputs.json';
 
 Amplify.configure(outputs);
 
-const client = generateClient<Schema>();
-
 export default function Home() {
-  return (
+  const router = useRouter();
 
-    <div className="py-6">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Welcome to QA Centre</h1>
-      </div>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-        <div className="py-4">
-          {/* Add your user dashboard content here */}
-        </div>
-      </div>
-    </div>
-  );
+  useEffect(() => {
+    // TODO: Add logic to check user role and redirect accordingly
+    // For now, redirect to user dashboard by default
+    router.push('/user');
+  }, [router]);
+
+  return null; // No need to render anything as we're redirecting
 }
