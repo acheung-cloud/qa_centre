@@ -526,6 +526,13 @@
               "isRequired": false,
               "attributes": []
             },
+            "score": {
+              "name": "score",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
             "duration": {
               "name": "duration",
               "isArray": false,
@@ -668,20 +675,6 @@
             },
             "questionId": {
               "name": "questionId",
-              "isArray": false,
-              "type": "String",
-              "isRequired": false,
-              "attributes": []
-            },
-            "groupID": {
-              "name": "groupID",
-              "isArray": false,
-              "type": "String",
-              "isRequired": false,
-              "attributes": []
-            },
-            "questionID": {
-              "name": "questionID",
               "isArray": false,
               "type": "String",
               "isRequired": false,
