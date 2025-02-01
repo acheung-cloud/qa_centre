@@ -1,26 +1,87 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { Schema } from "@/amplify/data/resource";
 import { useState } from 'react';
+import { generateClient } from "aws-amplify/api";
 
-const navigation = [
-  { name: 'Entities', href: '/' },
-  { name: 'Groups', href: '/groups' },
-  { name: 'Questions', href: '/questions' },
-  { name: 'Sessions', href: '/sessions' },
-];
+const client = generateClient<Schema>();
 
 interface SidebarProps {
   entities: Array<Schema["Entity"]['type']>;
   selectedEntityId: string;
   onEntityChange: (entityId: string) => void;
+  groups: Array<Schema["Group"]['type']>;
+  selectedGroupId: string;
+  onGroupChange: (groupId: string) => void;
+  onEntityCreated?: () => void;
+  onGroupCreated?: () => void;
 }
 
-export default function Sidebar({ entities, selectedEntityId, onEntityChange }: SidebarProps) {
-  const pathname = usePathname();
+export default function Sidebar({ 
+  entities, 
+  selectedEntityId, 
+  onEntityChange,
+  groups,
+  selectedGroupId,
+  onGroupChange,
+  onEntityCreated,
+  onGroupCreated
+}: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCreateEntityModalOpen, setIsCreateEntityModalOpen] = useState(false);
+  const [isCreateGroupModalOpen, setIsCreateGroupModalOpen] = useState(false);
+  const [newEntityName, setNewEntityName] = useState('');
+  const [newGroupName, setNewGroupName] = useState('');
+  const [newGroupDescription, setNewGroupDescription] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+
+  const handleCreateEntity = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEntityName.trim() || isCreating) return;
+
+    setIsCreating(true);
+    try {
+      const { data: newEntity } = await client.models.Entity.create({
+        name: newEntityName.trim()
+      });
+      setNewEntityName('');
+      setIsCreateEntityModalOpen(false);
+      onEntityCreated?.();
+      if (newEntity) {
+        onEntityChange(newEntity.id); // Auto-select the new entity
+      }
+    } catch (error) {
+      console.error('Error creating entity:', error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleCreateGroup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newGroupName.trim() || !selectedEntityId || isCreating) return;
+
+    setIsCreating(true);
+    try {
+      const { data: newGroup } = await client.models.Group.create({
+        name: newGroupName.trim(),
+        entityId: selectedEntityId,
+        description: newGroupDescription.trim() || undefined
+      });
+      setNewGroupName('');
+      setNewGroupDescription('');
+      setIsCreateGroupModalOpen(false);
+      onGroupCreated?.();
+      if (newGroup) {
+        onGroupChange(newGroup.id); // Auto-select the new group
+      }
+    } catch (error) {
+      console.error('Error creating group:', error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   return (
     <>
@@ -50,6 +111,92 @@ export default function Sidebar({ entities, selectedEntityId, onEntityChange }: 
         />
       )}
 
+      {/* Create Entity Modal */}
+      {isCreateEntityModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <form onSubmit={handleCreateEntity}>
+              <div className="p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Create New Entity</h3>
+                <input
+                  type="text"
+                  value={newEntityName}
+                  onChange={(e) => setNewEntityName(e.target.value)}
+                  placeholder="Enter entity name"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  disabled={isCreating}
+                />
+              </div>
+              <div className="bg-gray-50 px-6 py-3 flex justify-end gap-3 rounded-b-lg">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateEntityModalOpen(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                  disabled={isCreating}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50"
+                  disabled={isCreating || !newEntityName.trim()}
+                >
+                  {isCreating ? 'Creating...' : 'Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Group Modal */}
+      {isCreateGroupModalOpen && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <form onSubmit={handleCreateGroup}>
+              <div className="p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Create New Group</h3>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    value={newGroupName}
+                    onChange={(e) => setNewGroupName(e.target.value)}
+                    placeholder="Enter group name"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    disabled={isCreating}
+                  />
+                  <textarea
+                    value={newGroupDescription}
+                    onChange={(e) => setNewGroupDescription(e.target.value)}
+                    placeholder="Enter group description (optional)"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    rows={3}
+                    disabled={isCreating}
+                  />
+                </div>
+              </div>
+              <div className="bg-gray-50 px-6 py-3 flex justify-end gap-3 rounded-b-lg">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateGroupModalOpen(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                  disabled={isCreating}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50"
+                  disabled={isCreating || !newGroupName.trim() || !selectedEntityId}
+                >
+                  {isCreating ? 'Creating...' : 'Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar */}
       <div className={`
         fixed inset-y-0 left-0 z-40 w-72 transform bg-gradient-to-b from-gray-900 to-gray-800 shadow-xl transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static
@@ -58,10 +205,20 @@ export default function Sidebar({ entities, selectedEntityId, onEntityChange }: 
         <div className="flex h-16 shrink-0 items-center px-6 border-b border-gray-700">
           <h1 className="text-2xl font-bold text-white tracking-tight">QA Centre</h1>
         </div>
+
+        {/* Entity Selection */}
         <div className="px-4 py-4 border-b border-gray-700">
-          <label htmlFor="entity-select" className="block text-sm font-medium text-gray-300 mb-2">
-            Select Entity
-          </label>
+          <div className="flex justify-between items-center mb-2">
+            <label htmlFor="entity-select" className="block text-sm font-medium text-gray-300">
+              Select Entity
+            </label>
+            <button
+              onClick={() => setIsCreateEntityModalOpen(true)}
+              className="text-sm text-gray-300 hover:text-white"
+            >
+              + New
+            </button>
+          </div>
           <select
             id="entity-select"
             value={selectedEntityId}
@@ -79,25 +236,44 @@ export default function Sidebar({ entities, selectedEntityId, onEntityChange }: 
             ))}
           </select>
         </div>
-        <nav className="flex flex-1 flex-col px-4 py-6">
-          <ul className="flex flex-1 flex-col gap-y-2">
-            {navigation.map((item) => (
-              <li key={item.name}>
-                <Link
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                    pathname === item.href
-                      ? 'bg-blue-600 text-white shadow-lg'
-                      : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              </li>
+
+        {/* Group Selection */}
+        <div className="px-4 py-4 border-b border-gray-700">
+          <div className="flex justify-between items-center mb-2">
+            <label htmlFor="group-select" className="block text-sm font-medium text-gray-300">
+              Select Group
+            </label>
+            <button
+              onClick={() => setIsCreateGroupModalOpen(true)}
+              className="text-sm text-gray-300 hover:text-white"
+              disabled={!selectedEntityId}
+            >
+              + New
+            </button>
+          </div>
+          <select
+            id="group-select"
+            value={selectedGroupId}
+            onChange={(e) => {
+              onGroupChange(e.target.value);
+              setIsOpen(false);
+            }}
+            className="block w-full rounded-md border-gray-600 bg-gray-700 text-white py-2 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            disabled={!selectedEntityId}
+          >
+            <option value="">Select a group...</option>
+            {groups.map((group) => (
+              <option key={group.id} value={group.id}>
+                {group.name}
+              </option>
             ))}
-          </ul>
-        </nav>
+          </select>
+        </div>
+
+        {/* Main content area */}
+        <div className="flex-1 px-4 py-6">
+          {/* Add any additional content here */}
+        </div>
       </div>
     </>
   );

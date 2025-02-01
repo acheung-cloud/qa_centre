@@ -7,9 +7,19 @@ interface AdminContextType {
   entities: Array<Schema["Entity"]['type']>;
   selectedEntityId: string;
   setSelectedEntityId: (id: string) => void;
+  groups: Array<Schema["Group"]['type']>;
+  selectedGroupId: string;
+  setSelectedGroupId: (id: string) => void;
 }
 
-export const AdminContext = createContext<AdminContextType | undefined>(undefined);
+export const AdminContext = createContext<AdminContextType>({
+  entities: [],
+  selectedEntityId: "",
+  setSelectedEntityId: () => {},
+  groups: [],
+  selectedGroupId: "",
+  setSelectedGroupId: () => {},
+});
 
 export function useAdminContext() {
   const context = useContext(AdminContext);
