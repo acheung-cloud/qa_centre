@@ -101,7 +101,8 @@ const Home: React.FC = () => {
   const [editedQuestion, setEditedQuestion] = useState({
     question: '',
     remark: '',
-    duration: ''
+    duration: '',
+    score: ''
   });
 
   // Fetch group details when group ID changes
@@ -180,7 +181,8 @@ const Home: React.FC = () => {
         id: selectedQuestion.id,
         question: editedQuestion.question.trim(),
         remark: editedQuestion.remark.trim() || undefined,
-        duration: editedQuestion.duration ? parseInt(editedQuestion.duration) : undefined
+        duration: editedQuestion.duration ? parseInt(editedQuestion.duration) : undefined,
+        score: editedQuestion.score ? parseInt(editedQuestion.score) : undefined
       });
 
       if (updatedQuestion) {
@@ -190,7 +192,8 @@ const Home: React.FC = () => {
             ...prev,
             question: updatedQuestion.question,
             remark: updatedQuestion.remark,
-            duration: updatedQuestion.duration
+            duration: updatedQuestion.duration,
+            score: updatedQuestion.score
           };
         });
         setIsEditModalOpen(false);
@@ -275,7 +278,8 @@ const Home: React.FC = () => {
               setEditedQuestion({
                 question: selectedQuestion.question || '',
                 remark: selectedQuestion.remark || '',
-                duration: selectedQuestion.duration ? selectedQuestion.duration.toString() : ''
+                duration: selectedQuestion.duration ? selectedQuestion.duration.toString() : '',
+                score: selectedQuestion.score ? selectedQuestion.score.toString() : ''
               });
               setIsEditModalOpen(true);
             }
@@ -283,9 +287,10 @@ const Home: React.FC = () => {
         >
           <div className="space-y-4">
             <div className="text-sm text-gray-600">
-              {selectedQuestion?.duration ? `${selectedQuestion.duration}s` : "No time limit"} .
-              {selectedQuestion?.remark ?
-                ` ${selectedQuestion.remark}` :
+              {selectedQuestion?.duration ? `${selectedQuestion.duration}s` : "No time limit"} . 
+              {selectedQuestion?.score ? `Score: ${selectedQuestion.score}` : "No score set"} .
+              {selectedQuestion?.remark ? 
+                ` ${selectedQuestion.remark}` : 
                 <span className="text-gray-400">No remark</span>
               }
             </div>
@@ -372,6 +377,20 @@ const Home: React.FC = () => {
                     id="duration"
                     value={editedQuestion.duration}
                     onChange={(e) => setEditedQuestion(prev => ({ ...prev, duration: e.target.value }))}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    min="0"
+                    disabled={isUpdating}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="score" className="block text-sm font-medium text-gray-700">
+                    Score
+                  </label>
+                  <input
+                    type="number"
+                    id="score"
+                    value={editedQuestion.score}
+                    onChange={(e) => setEditedQuestion(prev => ({ ...prev, score: e.target.value }))}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     min="0"
                     disabled={isUpdating}
