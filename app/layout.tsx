@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "@aws-amplify/ui-react/styles.css";
-import AuthenticatedLayout from "./components/AuthenticatedLayout";
+import UserLayout from "./components/UserLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className={`${inter.className} h-full bg-gray-100`}>
-        <div className="min-h-full">
-          <AuthenticatedLayout>{children}</AuthenticatedLayout>
-        </div>
+        <UserLayout>
+          <div className="min-h-full">
+            {children}
+          </div>
+        </UserLayout>
       </body>
     </html>
   );
