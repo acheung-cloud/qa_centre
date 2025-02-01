@@ -83,10 +83,12 @@ const Home: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState<Schema["Group"]["type"] | null>(null);
   const [selectedSession, setSelectedSession] = useState<Schema["Session"]["type"] | null>(null);
   const [selectedQuestion, setSelectedQuestion] = useState<Schema["Question"]["type"] | null>(null);
+  const [selectedAnsOptions, setSelectedAnsOptions] = useState<Schema["AnsOption"]["type"][]>([]);
   const [isLoading, setIsLoading] = useState({
     group: false,
     session: false,
-    question: false 
+    question: false,
+    ansOptions: false
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -138,25 +140,29 @@ const Home: React.FC = () => {
     fetchSession();
   }, [selectedSessionId]);
 
-  // Fetch question details when question ID changes
+  // Fetch question details and answer options when question ID changes
   useEffect(() => {
-    async function fetchQuestion() {
+    async function fetchQuestionAndOptions() {
       if (!selectedQuestionId) {
         setSelectedQuestion(null);
+        setSelectedAnsOptions([]);
         return;
       }
-      setIsLoading(prev => ({ ...prev, question: true }));
+      setIsLoading(prev => ({ ...prev, question: true, ansOptions: true }));
       try {
-        const { data } = await client.models.Question.get({ id: selectedQuestionId });
-        setSelectedQuestion(data);
+        const { data: question } = await client.models.Question.get({ id: selectedQuestionId });
+        setSelectedQuestion(question);
+        const ansOptions = await question?.ansOptions();
+        setSelectedAnsOptions(ansOptions?.data ?? []);
       } catch (error) {
-        console.error('Error fetching question:', error);
+        console.error('Error fetching question and options:', error);
         setSelectedQuestion(null);
+        setSelectedAnsOptions([]);
       } finally {
-        setIsLoading(prev => ({ ...prev, question: false }));
+        setIsLoading(prev => ({ ...prev, question: false, ansOptions: false }));
       }
     }
-    fetchQuestion();
+    fetchQuestionAndOptions();
   }, [selectedQuestionId]);
 
   const handleUpdateQuestion = async () => {
@@ -217,7 +223,7 @@ const Home: React.FC = () => {
         <InfoCard
           title={selectedQuestion?.question || "Loading..."}
           emptyMessage="Select a question to view its details"
-          isLoading={isLoading.question}
+          isLoading={isLoading.question || isLoading.ansOptions}
           showEdit={!!selectedQuestion}
           onEdit={() => {
             if (selectedQuestion) {
@@ -230,15 +236,46 @@ const Home: React.FC = () => {
             }
           }}
         >
-          {selectedQuestion && (
+          <div className="space-y-4">
             <div className="text-sm text-gray-600">
-              {selectedQuestion.duration ? `${selectedQuestion.duration}s` : "No time limit"} . 
-              {selectedQuestion.remark ? 
+              {selectedQuestion?.duration ? `${selectedQuestion.duration}s` : "No time limit"} . 
+              {selectedQuestion?.remark ? 
                 ` ${selectedQuestion.remark}` : 
                 <span className="text-gray-400">No remark</span>
               }
             </div>
-          )}
+            
+            {/* Answer Options */}
+            { (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Answer Options:</h4>
+                <div className="space-y-2">
+                  {selectedAnsOptions.length === 0 ? (
+                    <p className="text-sm text-gray-500">No answer options available</p>
+                  ) : (
+                    selectedAnsOptions.map((ansOption) => (
+                      <div 
+                        key={ansOption.id} 
+                        className={`p-2 rounded-md ${ansOption.correct ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200'}`}
+                      >
+                        <div className="flex items-center">
+                          <div className="flex-1">
+                            <p className="text-sm">{ansOption.ansOption}</p>
+                            {ansOption.remark && (
+                              <p className="text-xs text-gray-500 mt-1">{ansOption.remark}</p>
+                            )}
+                          </div>
+                          {ansOption.correct && (
+                            <span className="text-green-600 text-xs font-medium">Correct</span>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </InfoCard>
       )}
 
