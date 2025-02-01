@@ -17,27 +17,66 @@ const schema = a.schema({
   Status: a.enum(['active', 'inactive']),
   
   Entity: a.model({
-    groups: a.hasMany('Group', 'entityId'),    
-    entityName: a.string(),
     status: a.ref('Status'),
+    groups: a.hasMany('Group', 'entityId'),    
+    name: a.string(),
     createdBy: a.string(),
     modifiedBy: a.string(),
   }),
 
   Group: a.model({
-    entityId: a.id().required(),
-    entity: a.belongsTo('Entity', 'entityId'),
-    groupName: a.string(),
     status: a.ref('Status'),
+    entityId: a.id(),
+    entity: a.belongsTo('Entity', 'entityId'),
+    sessions: a.hasMany('Session', 'groupId'),
+    name: a.string(),
     description: a.string(),
     createdBy: a.string(),
     modifiedBy: a.string(),
   }),
-  
-  
 
-  
+  Session: a.model({
+    status: a.ref('Status'),
+    group: a.belongsTo('Group', 'groupId'),
+    questions: a.hasMany('Question', 'sessionId'),
+    entityId: a.string(),
+    groupId: a.string(),
+    name: a.string(),
+    description: a.string(),
+    createdBy: a.string(),
+    modifiedBy: a.string(),
+  }),
 
+  Question: a.model({
+    status: a.ref('Status'),
+    session: a.belongsTo('Session', 'sessionId'),
+    ansOptions: a.hasMany('AnsOption', 'questionId'),
+    entityId: a.string(),
+    groupId: a.string(),
+    sessionId: a.string(),
+    question: a.string(),
+    remark: a.string(),
+    duration: a.integer(),
+    order: a.integer(),
+    createdBy: a.string(),
+    modifiedBy: a.string(),
+  }),
+
+  AnsOption: a.model({
+    status: a.ref('Status'),
+    entityId: a.string(),
+    question: a.belongsTo('Question', 'questionId'),
+    groupId: a.string(),
+    sessionId: a.string(),
+    questionId: a.string(),
+    groupID: a.string(),
+    questionID: a.string(),
+    ansOption: a.string(),
+    correct: a.string(),
+    remark: a.string(),
+    createdBy: a.string(),
+    modifiedBy: a.string(),
+  }),
 
 }).authorization((allow) => [allow.authenticated(), allow.publicApiKey()]);
 
