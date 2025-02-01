@@ -23,6 +23,8 @@ export default function Layout({
   const [selectedEntityId, setSelectedEntityId] = useState<string>("");
   const [groups, setGroups] = useState<Array<Schema["Group"]['type']>>([]);
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+  const [sessions, setSessions] = useState<Array<Schema["Session"]['type']>>([]);
+  const [selectedSessionId, setSelectedSessionId] = useState<string>("");
 
   async function listEntities() {
     const { data } = await client.models.Entity.list();
@@ -60,6 +62,30 @@ export default function Layout({
     }
   }
 
+  async function fetchSessions(groupId: string) {
+    if (!groupId) {
+      setSessions([]);
+      return;
+    }
+    try {
+      const { data: group } = await client.models.Group.get({ id: groupId });
+      if (!group) {
+        console.error('Group not found');
+        setSessions([]);
+        return;
+      }
+      const { data: sessionsData } = await group.sessions();
+      setSessions(sessionsData);
+      // Automatically select the first session if there is one
+      if (sessionsData.length > 0) {
+        setSelectedSessionId(sessionsData[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching sessions:', error);
+      setSessions([]);
+    }
+  }
+
   useEffect(() => {
     listEntities();
   }, []);
@@ -69,8 +95,17 @@ export default function Layout({
     fetchGroups(selectedEntityId);
   }, [selectedEntityId]);
 
+  useEffect(() => {
+    setSelectedSessionId("");
+    fetchSessions(selectedGroupId);
+  }, [selectedGroupId]);
+
   const handleGroupCreated = () => {
     fetchGroups(selectedEntityId);
+  };
+
+  const handleSessionCreated = () => {
+    fetchSessions(selectedGroupId);
   };
 
   const handleEntityChange = (entityId: string) => {
@@ -84,7 +119,10 @@ export default function Layout({
       setSelectedEntityId,
       groups,
       selectedGroupId,
-      setSelectedGroupId
+      setSelectedGroupId,
+      sessions,
+      selectedSessionId,
+      setSelectedSessionId
     }}>
       <AdminLayout>
         <div className="flex h-full">
@@ -95,8 +133,12 @@ export default function Layout({
             groups={groups}
             selectedGroupId={selectedGroupId}
             onGroupChange={setSelectedGroupId}
+            sessions={sessions}
+            selectedSessionId={selectedSessionId}
+            onSessionChange={setSelectedSessionId}
             onEntityCreated={listEntities}
-            onGroupCreated={() => fetchGroups(selectedEntityId)}
+            onGroupCreated={handleGroupCreated}
+            onSessionCreated={handleSessionCreated}
           />
           <div className="flex-1">
 
