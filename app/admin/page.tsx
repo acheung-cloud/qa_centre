@@ -78,248 +78,79 @@ const InfoField: React.FC<InfoFieldProps> = ({ label, value, fallback = "No info
   </div>
 );
 
-interface EditModalProps {
-  title: string;
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: () => Promise<void>;
-  isLoading: boolean;
-  formData: {
-    name: string;
-    description: string;
-    status: "active" | "inactive";
-  };
-  onChange: (field: string, value: string) => void;
-}
-
-const EditModal: React.FC<EditModalProps> = ({
-  title,
-  isOpen,
-  onClose,
-  onSave,
-  isLoading,
-  formData,
-  onChange,
-}) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        <div className="p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">{title}</h3>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={formData.name}
-                onChange={(e) => onChange("name", e.target.value)}
-                disabled={isLoading}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-              />
-            </div>
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-                Description
-              </label>
-              <textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => onChange("description", e.target.value)}
-                disabled={isLoading}
-                rows={3}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-              />
-            </div>
-            <div>
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                Status
-              </label>
-              <select
-                id="status"
-                value={formData.status}
-                onChange={(e) => onChange("status", e.target.value)}
-                disabled={isLoading}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div className="bg-gray-50 px-6 py-3 flex justify-end gap-3 rounded-b-lg">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isLoading}
-            className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onSave}
-            disabled={isLoading || !formData.name.trim()}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            {isLoading && (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            )}
-            Save Changes
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default function Home() {
-  const { selectedGroupId, selectedSessionId } = useContext(AdminContext);
+const Home: React.FC = () => {
+  const { selectedGroupId, selectedSessionId, selectedQuestionId } = useContext(AdminContext);
   const [selectedGroup, setSelectedGroup] = useState<Schema["Group"]["type"] | null>(null);
   const [selectedSession, setSelectedSession] = useState<Schema["Session"]["type"] | null>(null);
-  const [isLoading, setIsLoading] = useState({ group: false, session: false });
-  const [isEditGroupModalOpen, setIsEditGroupModalOpen] = useState(false);
-  const [isEditSessionModalOpen, setIsEditSessionModalOpen] = useState(false);
-  const [editingGroup, setEditingGroup] = useState({
-    name: "",
-    description: "",
-    status: "active" as "active" | "inactive"
-  });
-  const [editingSession, setEditingSession] = useState({
-    name: "",
-    description: "",
-    status: "active" as "active" | "inactive"
+  const [selectedQuestion, setSelectedQuestion] = useState<Schema["Question"]["type"] | null>(null);
+  const [isLoading, setIsLoading] = useState({ 
+    group: false, 
+    session: false,
+    question: false 
   });
 
-  // Fetch selected group details
+  // Fetch group details when group ID changes
   useEffect(() => {
-    async function fetchGroupDetails() {
+    async function fetchGroup() {
       if (!selectedGroupId) {
         setSelectedGroup(null);
         return;
       }
-      
       setIsLoading(prev => ({ ...prev, group: true }));
       try {
-        const { data: group } = await client.models.Group.get({ id: selectedGroupId });
-        if (!group) throw new Error('Group not found');
-        setSelectedGroup(group);
+        const { data } = await client.models.Group.get({ id: selectedGroupId });
+        setSelectedGroup(data);
       } catch (error) {
-        console.error('Error fetching group details:', error);
+        console.error('Error fetching group:', error);
         setSelectedGroup(null);
       } finally {
         setIsLoading(prev => ({ ...prev, group: false }));
       }
     }
-    fetchGroupDetails();
+    fetchGroup();
   }, [selectedGroupId]);
 
-  // Fetch selected session details
+  // Fetch session details when session ID changes
   useEffect(() => {
-    async function fetchSessionDetails() {
+    async function fetchSession() {
       if (!selectedSessionId) {
         setSelectedSession(null);
         return;
       }
-
       setIsLoading(prev => ({ ...prev, session: true }));
       try {
-        const { data: session } = await client.models.Session.get({ id: selectedSessionId });
-        if (!session) throw new Error('Session not found');
-        setSelectedSession(session);
+        const { data } = await client.models.Session.get({ id: selectedSessionId });
+        setSelectedSession(data);
       } catch (error) {
-        console.error('Error fetching session details:', error);
+        console.error('Error fetching session:', error);
         setSelectedSession(null);
       } finally {
         setIsLoading(prev => ({ ...prev, session: false }));
       }
     }
-    fetchSessionDetails();
+    fetchSession();
   }, [selectedSessionId]);
 
-  const handleEditGroup = () => {
-    if (selectedGroup) {
-      setEditingGroup({
-        name: selectedGroup.name ?? "",
-        description: selectedGroup.description ?? "",
-        status: selectedGroup.status as "active" | "inactive"
-      });
-      setIsEditGroupModalOpen(true);
+  // Fetch question details when question ID changes
+  useEffect(() => {
+    async function fetchQuestion() {
+      if (!selectedQuestionId) {
+        setSelectedQuestion(null);
+        return;
+      }
+      setIsLoading(prev => ({ ...prev, question: true }));
+      try {
+        const { data } = await client.models.Question.get({ id: selectedQuestionId });
+        setSelectedQuestion(data);
+      } catch (error) {
+        console.error('Error fetching question:', error);
+        setSelectedQuestion(null);
+      } finally {
+        setIsLoading(prev => ({ ...prev, question: false }));
+      }
     }
-  };
-
-  const handleEditSession = () => {
-    if (selectedSession) {
-      setEditingSession({
-        name: selectedSession.name ?? "",
-        description: selectedSession.description || "",
-        status: selectedSession.status as "active" | "inactive"
-      });
-      setIsEditSessionModalOpen(true);
-    }
-  };
-
-  const handleSaveGroup = async () => {
-    if (!selectedGroupId) return;
-
-    setIsLoading(prev => ({ ...prev, group: true }));
-    try {
-      const { data: updatedGroup } = await client.models.Group.update({
-        id: selectedGroupId,
-        name: editingGroup.name.trim(),
-        description: editingGroup.description.trim() || undefined,
-        status: editingGroup.status
-      });
-      if (!updatedGroup) throw new Error('Failed to update group');
-      setSelectedGroup(updatedGroup);
-      setIsEditGroupModalOpen(false);
-    } catch (error) {
-      console.error('Error updating group:', error);
-      // You might want to show an error toast here
-    } finally {
-      setIsLoading(prev => ({ ...prev, group: false }));
-    }
-  };
-
-  const handleSaveSession = async () => {
-    if (!selectedSessionId) return;
-
-    setIsLoading(prev => ({ ...prev, session: true }));
-    try {
-      const { data: updatedSession } = await client.models.Session.update({
-        id: selectedSessionId,
-        name: editingSession.name.trim(),
-        description: editingSession.description.trim() || undefined,
-        status: editingSession.status
-      });
-      if (!updatedSession) throw new Error('Failed to update session');
-      setSelectedSession(updatedSession);
-      setIsEditSessionModalOpen(false);
-    } catch (error) {
-      console.error('Error updating session:', error);
-      // You might want to show an error toast here
-    } finally {
-      setIsLoading(prev => ({ ...prev, session: false }));
-    }
-  };
-
-  const handleGroupChange = (field: string, value: string) => {
-    setEditingGroup(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleSessionChange = (field: string, value: string) => {
-    setEditingSession(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
+    fetchQuestion();
+  }, [selectedQuestionId]);
 
   return (
     <div className="space-y-8">
@@ -328,7 +159,6 @@ export default function Home() {
         title={`${selectedGroup?selectedGroup?.name+"'s description":"No Group Selected"}`}
         emptyMessage="Select a group to view its information"
         showEdit={!!selectedGroup}
-        onEdit={handleEditGroup}
         isLoading={isLoading.group}
       >
         {selectedGroup && (
@@ -343,7 +173,6 @@ export default function Home() {
         title={`${selectedSession?selectedSession?.name+"'s description":"No Session Selected"}`}
         emptyMessage="Select a session to view its information"
         showEdit={!!selectedSession}
-        onEdit={handleEditSession}
         isLoading={isLoading.session}
       >
         {selectedSession && (
@@ -353,27 +182,25 @@ export default function Home() {
         )}
       </InfoCard>
 
-      {/* Edit Group Modal */}
-      <EditModal
-        title="Edit Group"
-        isOpen={isEditGroupModalOpen}
-        onClose={() => setIsEditGroupModalOpen(false)}
-        onSave={handleSaveGroup}
-        isLoading={isLoading.group}
-        formData={editingGroup}
-        onChange={handleGroupChange}
-      />
-
-      {/* Edit Session Modal */}
-      <EditModal
-        title="Edit Session"
-        isOpen={isEditSessionModalOpen}
-        onClose={() => setIsEditSessionModalOpen(false)}
-        onSave={handleSaveSession}
-        isLoading={isLoading.session}
-        formData={editingSession}
-        onChange={handleSessionChange}
-      />
+      {/* Question Information */}
+      {selectedQuestionId && (
+        <InfoCard
+          title="Question Details"
+          emptyMessage="Select a question to view its details"
+          isLoading={isLoading.question}
+        >
+          {selectedQuestion && (
+            <div className="space-y-4">
+              <InfoField label="Question" value={selectedQuestion.question} />
+              <InfoField label="Remark" value={selectedQuestion.remark || 'No remark'} />
+              <InfoField label="Duration" value={selectedQuestion.duration ? `${selectedQuestion.duration} minutes` : 'Not specified'} />
+              <InfoField label="Order" value={selectedQuestion.order?.toString() || 'Not specified'} />
+            </div>
+          )}
+        </InfoCard>
+      )}
     </div>
   );
-}
+};
+
+export default Home;

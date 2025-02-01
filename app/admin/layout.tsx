@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import "@aws-amplify/ui-react/styles.css";
-import Sidebar from "../components/Sidebar";
 import AdminHeader from "../components/AdminHeader";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/api";
@@ -25,6 +24,7 @@ export default function Layout({
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [sessions, setSessions] = useState<Array<Schema["Session"]['type']>>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string>("");
+  const [selectedQuestionId, setSelectedQuestionId] = useState<string>("");
 
   async function listEntities() {
     const { data } = await client.models.Entity.list();
@@ -52,8 +52,8 @@ export default function Layout({
       const { data: groupsData } = await entity.groups();
       console.log('Found groups:', groupsData);
       setGroups(groupsData);
-      // Automatically select the first group if there is one
-      if (groupsData.length > 0) {
+      // Automatically select the first group if there is one and no group is currently selected
+      if (groupsData.length > 0 && !selectedGroupId) {
         setSelectedGroupId(groupsData[0].id);
       }
     } catch (error) {
@@ -68,16 +68,19 @@ export default function Layout({
       return;
     }
     try {
+      console.log('Fetching sessions for group:', groupId);
       const { data: group } = await client.models.Group.get({ id: groupId });
+      console.log('Found group:', group);
       if (!group) {
         console.error('Group not found');
         setSessions([]);
         return;
       }
       const { data: sessionsData } = await group.sessions();
+      console.log('Found sessions:', sessionsData);
       setSessions(sessionsData);
-      // Automatically select the first session if there is one
-      if (sessionsData.length > 0) {
+      // Automatically select the first session if there is one and no session is currently selected
+      if (sessionsData.length > 0 && !selectedSessionId) {
         setSelectedSessionId(sessionsData[0].id);
       }
     } catch (error) {
@@ -91,13 +94,15 @@ export default function Layout({
   }, []);
 
   useEffect(() => {
-    setSelectedGroupId("");
-    fetchGroups(selectedEntityId);
+    if (selectedEntityId) {
+      fetchGroups(selectedEntityId);
+    }
   }, [selectedEntityId]);
 
   useEffect(() => {
-    setSelectedSessionId("");
-    fetchSessions(selectedGroupId);
+    if (selectedGroupId) {
+      fetchSessions(selectedGroupId);
+    }
   }, [selectedGroupId]);
 
   const handleGroupCreated = () => {
@@ -112,6 +117,22 @@ export default function Layout({
     setSelectedEntityId(entityId);
   };
 
+  // Clear selections when parent items change
+  useEffect(() => {
+    setSelectedGroupId("");
+    setSelectedSessionId("");
+    setSelectedQuestionId("");
+  }, [selectedEntityId]);
+
+  useEffect(() => {
+    setSelectedSessionId("");
+    setSelectedQuestionId("");
+  }, [selectedGroupId]);
+
+  useEffect(() => {
+    setSelectedQuestionId("");
+  }, [selectedSessionId]);
+
   return (
     <AdminContext.Provider value={{
       entities,
@@ -122,31 +143,12 @@ export default function Layout({
       setSelectedGroupId,
       sessions,
       selectedSessionId,
-      setSelectedSessionId
+      setSelectedSessionId,
+      selectedQuestionId,
+      setSelectedQuestionId
     }}>
       <AdminLayout>
-        <div className="flex h-full">
-          <Sidebar
-            entities={entities}
-            selectedEntityId={selectedEntityId}
-            onEntityChange={handleEntityChange}
-            groups={groups}
-            selectedGroupId={selectedGroupId}
-            onGroupChange={setSelectedGroupId}
-            sessions={sessions}
-            selectedSessionId={selectedSessionId}
-            onSessionChange={setSelectedSessionId}
-            onEntityCreated={listEntities}
-            onGroupCreated={handleGroupCreated}
-            onSessionCreated={handleSessionCreated}
-          />
-          <div className="flex-1">
-
-            <main className="p-8">
-              {children}
-            </main>
-          </div>
-        </div>
+        {children}
       </AdminLayout>
     </AdminContext.Provider>
   );
