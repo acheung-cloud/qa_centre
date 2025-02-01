@@ -185,16 +185,17 @@ const Home: React.FC = () => {
       {/* Question Information */}
       {selectedQuestionId && (
         <InfoCard
-          title="Question Details"
+          title={selectedQuestion?.question || "Loading..."}
           emptyMessage="Select a question to view its details"
           isLoading={isLoading.question}
         >
           {selectedQuestion && (
-            <div className="space-y-4">
-              <InfoField label="Question" value={selectedQuestion.question} />
-              <InfoField label="Remark" value={selectedQuestion.remark || 'No remark'} />
-              <InfoField label="Duration" value={selectedQuestion.duration ? `${selectedQuestion.duration} minutes` : 'Not specified'} />
-              <InfoField label="Order" value={selectedQuestion.order?.toString() || 'Not specified'} />
+            <div className="text-sm text-gray-600">
+              {selectedQuestion.duration ? `${selectedQuestion.duration}s` : "No time limit"} . 
+              {selectedQuestion.remark ? 
+                ` ${selectedQuestion.remark}` : 
+                <span className="text-gray-400">No remark</span>
+              }
             </div>
           )}
         </InfoCard>
