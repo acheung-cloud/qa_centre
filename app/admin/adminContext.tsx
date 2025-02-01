@@ -10,6 +10,9 @@ interface AdminContextType {
   groups: Array<Schema["Group"]['type']>;
   selectedGroupId: string;
   setSelectedGroupId: (id: string) => void;
+  sessions: Array<Schema["Session"]['type']>;
+  selectedSessionId: string;
+  setSelectedSessionId: (id: string) => void;
 }
 
 export const AdminContext = createContext<AdminContextType>({
@@ -19,6 +22,9 @@ export const AdminContext = createContext<AdminContextType>({
   groups: [],
   selectedGroupId: "",
   setSelectedGroupId: () => {},
+  sessions: [],
+  selectedSessionId: "",
+  setSelectedSessionId: () => {},
 });
 
 export function useAdminContext() {
