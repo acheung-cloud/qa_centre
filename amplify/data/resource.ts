@@ -118,7 +118,6 @@ const schema = a.schema({
   }),
 
   ResponseLog: a.model({
-    participant: a.belongsTo('Participant', 'participantId'),
     question: a.belongsTo('Question', 'questionId'),
     session: a.belongsTo('Session', 'sessionId'),
     entityId: a.string(),
