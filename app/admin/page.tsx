@@ -260,22 +260,11 @@ const Home: React.FC = () => {
       const qaData = JSON.stringify(qa);
       console.log('QA Data:', qaData);
 
-      console.log('Attempting to create/update QACurrent with data:', {
-        groupId: selectedGroupId,
-        sessionId: selectedSessionId,
-        questionId: selectedQuestionId,
-        qa: qaData,
-        score: selectedQuestion.score,
-        duration: selectedQuestion.duration
-      });
-
-      // Try to get existing QACurrent first
-      const { data: existingQACurrent } = await client.models.QACurrent.get({ groupId: selectedGroupId });
-
       let result;
-      if (existingQACurrent) {
-        console.log('Updating existing QACurrent');
+      try {
+        console.log('Attempting to update QACurrent');
         const { data: updatedQACurrent, errors: updateErrors } = await client.models.QACurrent.update({
+          qaStatus: 'opened',
           groupId: selectedGroupId,
           sessionId: selectedSessionId,
           questionId: selectedQuestionId,
@@ -295,9 +284,10 @@ const Home: React.FC = () => {
         }
 
         result = updatedQACurrent;
-      } else {
-        console.log('Creating new QACurrent');
+      } catch (updateError) {
+        console.log('Update failed, attempting to create QACurrent');
         const { data: newQACurrent, errors: createErrors } = await client.models.QACurrent.create({
+          qaStatus: 'opened',
           groupId: selectedGroupId,
           sessionId: selectedSessionId,
           questionId: selectedQuestionId,
@@ -318,15 +308,10 @@ const Home: React.FC = () => {
 
         result = newQACurrent;
       }
-
-      // Verify the creation/update
-      const verification = await client.models.QACurrent.get({ groupId: selectedGroupId });
-      if (verification.data) {
-        console.log('Verification successful - QACurrent exists:', verification.data);
-        alert('Question successfully posted!');
-      } else {
-        throw new Error('QACurrent not found after creation/update');
+      if (!result) {
+        throw new Error('QACurrent creation/update failed');
       }
+
     } catch (error) {
       console.error('Detailed error posting question:', error);
       if (error instanceof Error) {
