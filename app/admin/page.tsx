@@ -239,10 +239,10 @@ const Home: React.FC = () => {
 
   const postToQACurrent = async () => {
     if (!selectedGroupId || !selectedSessionId || !selectedQuestionId || !selectedQuestion || isPosting) return;
-    
+
     // Check if score and duration exist and are valid
-    if (selectedQuestion.score === undefined || selectedQuestion.score === null || 
-        selectedQuestion.duration === undefined || selectedQuestion.duration === null) {
+    if (selectedQuestion.score === undefined || selectedQuestion.score === null ||
+      selectedQuestion.duration === undefined || selectedQuestion.duration === null) {
       alert('Question must have both score and duration set before posting.');
       return;
     }
@@ -284,16 +284,16 @@ const Home: React.FC = () => {
           duration: selectedQuestion.duration,
           modifiedBy: "admin"
         });
-        
+
         if (updateErrors) {
           console.error('Errors updating QACurrent:', updateErrors);
           throw new Error(updateErrors[0]?.message || 'Failed to update QACurrent');
         }
-        
+
         if (!updatedQACurrent) {
           throw new Error('No data returned from QACurrent update');
         }
-        
+
         result = updatedQACurrent;
       } else {
         console.log('Creating new QACurrent');
@@ -306,16 +306,16 @@ const Home: React.FC = () => {
           duration: selectedQuestion.duration,
           modifiedBy: "admin"
         });
-        
+
         if (createErrors) {
           console.error('Errors creating QACurrent:', createErrors);
           throw new Error(createErrors[0]?.message || 'Failed to create QACurrent');
         }
-        
+
         if (!newQACurrent) {
           throw new Error('No data returned from QACurrent creation');
         }
-        
+
         result = newQACurrent;
       }
 
@@ -369,44 +369,7 @@ const Home: React.FC = () => {
         )}
       </InfoCard>
 
-      {/* Question Information */}
-      {selectedQuestionId && (
-        <InfoCard
-          title="Question Details"
-          emptyMessage="No question selected"
-          showEdit={!!selectedQuestion}
-          onEdit={() => setIsEditModalOpen(true)}
-          isLoading={isLoading.question}
-        >
-          {selectedQuestion && (
-            <div className="space-y-4">
-              <InfoField label="Question" value={selectedQuestion.question} />
-              <InfoField label="Remark" value={selectedQuestion.remark} />
-              <InfoField label="Duration (seconds)" value={selectedQuestion.duration?.toString()} />
-              <InfoField label="Score" value={selectedQuestion.score?.toString()} />
-              <div className="mt-4">
-                <button
-                  onClick={postToQACurrent}
-                  disabled={isPosting || !selectedGroupId || !selectedSessionId || !selectedQuestionId}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isPosting ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Posting...
-                    </>
-                  ) : (
-                    'Post Now'
-                  )}
-                </button>
-              </div>
-            </div>
-          )}
-        </InfoCard>
-      )}
+     
 
       {/* Answer Options */}
       {selectedQuestionId && (
@@ -427,15 +390,39 @@ const Home: React.FC = () => {
             }
           }}
         >
-          <div className="space-y-4">
+          <div className="flex justify-between items-center mb-2">
             <div className="text-sm text-gray-600">
-              {selectedQuestion?.duration ? `${selectedQuestion.duration}s` : "No time limit"} . 
+              {selectedQuestion?.duration ? `${selectedQuestion.duration}s` : "No time limit"} .
               {selectedQuestion?.score ? `Score: ${selectedQuestion.score}` : "No score set"} .
-              {selectedQuestion?.remark ? 
-                ` ${selectedQuestion.remark}` : 
+              {selectedQuestion?.remark ?
+                ` ${selectedQuestion.remark}` :
                 <span className="text-gray-400">No remark</span>
               }
             </div>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={postToQACurrent}
+                disabled={isPosting || !selectedGroupId || !selectedSessionId || !selectedQuestionId}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isPosting ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Posting
+                  </>
+                ) : (
+                  'Post Now'
+                )}
+              </button>
+
+
+            </div>
+          </div>
+          <div className="space-y-4">
+
 
             {/* Answer Options */}
             {(
@@ -465,12 +452,14 @@ const Home: React.FC = () => {
                     ))
                   )}
                 </div>
-                <button
-                  onClick={() => setIsAnsOptionModalOpen(true)}
-                  className="mt-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Add Answer Option
-                </button>
+                <div>
+                  <button
+                    onClick={() => setIsAnsOptionModalOpen(true)}
+                    className="mt-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Add Answer Option
+                  </button>
+                </div>
               </div>
             )}
           </div>
