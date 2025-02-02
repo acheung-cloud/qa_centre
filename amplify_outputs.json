@@ -839,6 +839,15 @@
         "QACurrent": {
           "name": "QACurrent",
           "fields": {
+            "qaStatus": {
+              "name": "qaStatus",
+              "isArray": false,
+              "type": {
+                "enum": "QaStatus"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
             "groupId": {
               "name": "groupId",
               "isArray": false,
@@ -1831,6 +1840,14 @@
           "values": [
             "active",
             "inactive"
+          ]
+        },
+        "QaStatus": {
+          "name": "QaStatus",
+          "values": [
+            "opened",
+            "closed",
+            "cleared"
           ]
         }
       },

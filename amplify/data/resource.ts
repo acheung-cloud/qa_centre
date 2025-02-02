@@ -15,6 +15,7 @@ specifies that any user authenticated via an API key can "create", "read",
 const schema = a.schema({
 
   Status: a.enum(['active', 'inactive']),
+  QAStatus: a.enum(['opened', 'closed', 'cleared']),
   
   Entity: a.model({
     status: a.ref('Status'),
@@ -82,6 +83,7 @@ const schema = a.schema({
   }),
 
   QACurrent: a.model({
+    qaStatus: a.ref('QAStatus'),
     groupId: a.string().required(),
     sessionId: a.string().required(),
     questionId: a.string().required(),
