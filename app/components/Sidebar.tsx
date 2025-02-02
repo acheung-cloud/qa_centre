@@ -122,10 +122,15 @@ export default function Sidebar({
       const { data: newQuestionData } = await client.models.Question.create({
         question: newQuestion.trim(),
         sessionId: selectedSessionId,
-        remark: newQuestionRemark.trim() || undefined,
-        duration: newQuestionDuration ? parseInt(newQuestionDuration) : undefined,
-        score: newQuestionScore ? parseInt(newQuestionScore) : undefined,
-        order: maxOrder + 1
+        remark: newQuestionRemark.trim(),
+        duration: newQuestionDuration ? parseInt(newQuestionDuration) : 0,
+        score: newQuestionScore ? parseInt(newQuestionScore) : 0,
+        order: maxOrder + 1,
+        status: "active",
+        entityId: selectedEntityId,
+        groupId: selectedGroupId,
+        createdBy: "system",
+        modifiedBy: "system"
       });
       setNewQuestion('');
       setNewQuestionRemark('');

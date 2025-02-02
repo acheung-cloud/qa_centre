@@ -26,9 +26,10 @@ const schema = a.schema({
 
   Group: a.model({
     status: a.ref('Status'),
-    entityId: a.id(),
+    entityId: a.string(),
     entity: a.belongsTo('Entity', 'entityId'),
     sessions: a.hasMany('Session', 'groupId'),
+    participants: a.hasMany('Participant', 'groupId'),
     name: a.string(),
     description: a.string(),
     createdBy: a.string(),
@@ -39,6 +40,8 @@ const schema = a.schema({
     status: a.ref('Status'),
     group: a.belongsTo('Group', 'groupId'),
     questions: a.hasMany('Question', 'sessionId'),
+    sessionScores: a.hasMany('SessionScore', 'sessionId'),
+    responseLogs: a.hasMany('ResponseLog', 'sessionId'),
     entityId: a.string(),
     groupId: a.string(),
     name: a.string(),
@@ -51,6 +54,7 @@ const schema = a.schema({
     status: a.ref('Status'),
     session: a.belongsTo('Session', 'sessionId'),
     ansOptions: a.hasMany('AnsOption', 'questionId'),
+    responseLogs: a.hasMany('ResponseLog', 'questionId'),
     entityId: a.string(),
     groupId: a.string(),
     sessionId: a.string(),
@@ -75,6 +79,93 @@ const schema = a.schema({
     remark: a.string(),
     createdBy: a.string(),
     modifiedBy: a.string(),
+  }),
+
+  QACurrent: a.model({
+    groupId: a.string().required(),
+    sessionId: a.string().required(),
+    questionId: a.string().required(),
+    qa: a.string().required(),  // For storing the QA JSON object
+    score: a.integer().required(),
+    duration: a.integer().required(),
+    modifiedBy: a.string().required(),
+  })
+  .identifier(['groupId']),
+
+  User: a.model({
+    status: a.ref('Status'),
+    participants: a.hasMany('Participant', 'userId'),
+    name: a.string(),
+    email: a.string(),
+    loginDT: a.datetime(),
+    modifiedBy: a.string(),
+    modifiedAt: a.datetime(),
+  }),
+
+  Participant: a.model({
+    status: a.ref('Status'),
+    user: a.belongsTo('User', 'userId'),
+    group: a.belongsTo('Group', 'groupId'),
+    sessionScores: a.hasMany('SessionScore', 'participantId'),
+    entityId: a.string(),
+    groupId: a.string(),
+    userId: a.string(),
+    email: a.string(),
+    registerDT: a.datetime(),
+    loginDT: a.datetime(),
+    createdBy: a.string(),
+    modifiedBy: a.string(),
+  }),
+
+  ResponseLog: a.model({
+    participant: a.belongsTo('Participant', 'participantId'),
+    question: a.belongsTo('Question', 'questionId'),
+    session: a.belongsTo('Session', 'sessionId'),
+    entityId: a.string(),
+    groupId: a.string(),
+    sessionId: a.string(),
+    userId: a.string(),
+    participantId: a.string(),
+    email: a.string(),
+    questionId: a.string(),
+    responseTime: a.integer(),
+    correctPercent: a.integer(),
+    score: a.integer(),
+    scoreMax: a.integer(),
+    qaRecord: a.string(),
+  }),
+
+  SessionScore: a.model({
+    participant: a.belongsTo('Participant', 'participantId'),
+    session: a.belongsTo('Session', 'sessionId'),
+    entityId: a.string(),
+    groupId: a.string(),
+    sessionId: a.string(),
+    participantId: a.string(),
+    email: a.string(),
+    score: a.integer(),
+  }),
+
+  QALog: a.model({
+    entityId: a.string(),
+    groupId: a.string(),
+    sessionId: a.string(),
+    questionId: a.string(),
+    groupName: a.string(),
+    sessionName: a.string(),
+    sectionDescription: a.string(),
+    question: a.string(),
+    beginDT: a.datetime(),
+    endDT: a.datetime(),
+    partiTotal: a.integer(),
+    partiResNum: a.integer(),
+  }),
+
+  OpLog: a.model({
+    entityId: a.string(),
+    category: a.string(),
+    opCode: a.integer(),
+    opDesc: a.string(),
   }),
 
 }).authorization((allow) => [allow.authenticated(), allow.publicApiKey()]);

@@ -104,6 +104,7 @@ const Home: React.FC = () => {
     duration: '',
     score: ''
   });
+  const [isPosting, setIsPosting] = useState(false);
 
   // Fetch group details when group ID changes
   useEffect(() => {
@@ -236,6 +237,108 @@ const Home: React.FC = () => {
     }
   };
 
+  const postToQACurrent = async () => {
+    if (!selectedGroupId || !selectedSessionId || !selectedQuestionId || !selectedQuestion || isPosting) return;
+    
+    // Check if score and duration exist and are valid
+    if (selectedQuestion.score === undefined || selectedQuestion.score === null || 
+        selectedQuestion.duration === undefined || selectedQuestion.duration === null) {
+      alert('Question must have both score and duration set before posting.');
+      return;
+    }
+
+    setIsPosting(true);
+    try {
+      const qa = {
+        Question: selectedQuestion.question,
+        AnsOptions: selectedAnsOptions.map(opt => ({
+          ansOption: opt.ansOption,
+          correct: opt.correct
+        }))
+      };
+
+      const qaData = JSON.stringify(qa);
+      console.log('QA Data:', qaData);
+
+      console.log('Attempting to create/update QACurrent with data:', {
+        groupId: selectedGroupId,
+        sessionId: selectedSessionId,
+        questionId: selectedQuestionId,
+        qa: qaData,
+        score: selectedQuestion.score,
+        duration: selectedQuestion.duration
+      });
+
+      // Try to get existing QACurrent first
+      const { data: existingQACurrent } = await client.models.QACurrent.get({ groupId: selectedGroupId });
+
+      let result;
+      if (existingQACurrent) {
+        console.log('Updating existing QACurrent');
+        const { data: updatedQACurrent, errors: updateErrors } = await client.models.QACurrent.update({
+          groupId: selectedGroupId,
+          sessionId: selectedSessionId,
+          questionId: selectedQuestionId,
+          qa: qaData,
+          score: selectedQuestion.score,
+          duration: selectedQuestion.duration,
+          modifiedBy: "admin"
+        });
+        
+        if (updateErrors) {
+          console.error('Errors updating QACurrent:', updateErrors);
+          throw new Error(updateErrors[0]?.message || 'Failed to update QACurrent');
+        }
+        
+        if (!updatedQACurrent) {
+          throw new Error('No data returned from QACurrent update');
+        }
+        
+        result = updatedQACurrent;
+      } else {
+        console.log('Creating new QACurrent');
+        const { data: newQACurrent, errors: createErrors } = await client.models.QACurrent.create({
+          groupId: selectedGroupId,
+          sessionId: selectedSessionId,
+          questionId: selectedQuestionId,
+          qa: qaData,
+          score: selectedQuestion.score,
+          duration: selectedQuestion.duration,
+          modifiedBy: "admin"
+        });
+        
+        if (createErrors) {
+          console.error('Errors creating QACurrent:', createErrors);
+          throw new Error(createErrors[0]?.message || 'Failed to create QACurrent');
+        }
+        
+        if (!newQACurrent) {
+          throw new Error('No data returned from QACurrent creation');
+        }
+        
+        result = newQACurrent;
+      }
+
+      // Verify the creation/update
+      const verification = await client.models.QACurrent.get({ groupId: selectedGroupId });
+      if (verification.data) {
+        console.log('Verification successful - QACurrent exists:', verification.data);
+        alert('Question successfully posted!');
+      } else {
+        throw new Error('QACurrent not found after creation/update');
+      }
+    } catch (error) {
+      console.error('Detailed error posting question:', error);
+      if (error instanceof Error) {
+        alert(`Failed to post question: ${error.message}`);
+      } else {
+        alert('Failed to post question. Please check console for details.');
+      }
+    } finally {
+      setIsPosting(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Group Information */}
@@ -267,6 +370,45 @@ const Home: React.FC = () => {
       </InfoCard>
 
       {/* Question Information */}
+      {selectedQuestionId && (
+        <InfoCard
+          title="Question Details"
+          emptyMessage="No question selected"
+          showEdit={!!selectedQuestion}
+          onEdit={() => setIsEditModalOpen(true)}
+          isLoading={isLoading.question}
+        >
+          {selectedQuestion && (
+            <div className="space-y-4">
+              <InfoField label="Question" value={selectedQuestion.question} />
+              <InfoField label="Remark" value={selectedQuestion.remark} />
+              <InfoField label="Duration (seconds)" value={selectedQuestion.duration?.toString()} />
+              <InfoField label="Score" value={selectedQuestion.score?.toString()} />
+              <div className="mt-4">
+                <button
+                  onClick={postToQACurrent}
+                  disabled={isPosting || !selectedGroupId || !selectedSessionId || !selectedQuestionId}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isPosting ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Posting...
+                    </>
+                  ) : (
+                    'Post Now'
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+        </InfoCard>
+      )}
+
+      {/* Answer Options */}
       {selectedQuestionId && (
         <InfoCard
           title={selectedQuestion?.question || "Loading..."}
@@ -325,7 +467,7 @@ const Home: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setIsAnsOptionModalOpen(true)}
-                  className="mt-4 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="mt-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   Add Answer Option
                 </button>
