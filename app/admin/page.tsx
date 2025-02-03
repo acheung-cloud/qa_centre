@@ -105,6 +105,16 @@ const Home: React.FC = () => {
     score: ''
   });
   const [isPosting, setIsPosting] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [isCountdownRunning, setIsCountdownRunning] = useState(false);
+  const [qaStatus, setQaStatus] = useState('');
+  const [closeMessage, setCloseMessage] = useState('');
+  const [showCorrectIndicator, setShowCorrectIndicator] = useState(false);
+
+  const toggleCorrectIndicator = () => {
+    setShowCorrectIndicator(prev => !prev);
+  };
 
   // Fetch group details when group ID changes
   useEffect(() => {
@@ -213,7 +223,6 @@ const Home: React.FC = () => {
     try {
       const { data: createdOption } = await client.models.AnsOption.create({
         ansOption: newAnsOption.ansOption,
-        remark: newAnsOption.remark,
         correct: newAnsOption.correct,
         status: 'active',
         entityId: selectedQuestion.entityId,
@@ -263,6 +272,7 @@ const Home: React.FC = () => {
       let result;
       try {
         console.log('Attempting to update QACurrent');
+        setQaStatus('opened');
         const { data: updatedQACurrent, errors: updateErrors } = await client.models.QACurrent.update({
           qaStatus: 'opened',
           groupId: selectedGroupId,
@@ -324,6 +334,70 @@ const Home: React.FC = () => {
     }
   };
 
+  const handlePostNowClick = async () => {
+    await postToQACurrent();
+    setCountdown(selectedQuestion?.duration ?? 0);
+    setIsModalOpen(true);
+    setIsCountdownRunning(true);
+  };
+
+  const closeQACurrent = async () => {
+    setIsCountdownRunning(false);
+    await client.models.QACurrent.update({
+      groupId: selectedGroupId,
+      sessionId: selectedSessionId,
+      questionId: selectedQuestionId,
+      qaStatus: 'closed',
+    });
+    setQaStatus('closed');
+  }
+
+  useEffect(() => {
+    if (isCountdownRunning && countdown !== null && countdown > 0) {
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown && prevCountdown > 0) {
+            return prevCountdown - 1;
+          }
+          return prevCountdown;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    } else if (countdown === 0) {
+      // Set QACurrent with qaStatus "closed"
+      closeQACurrent();
+      setCloseMessage('Times up! ');
+    }
+  }, [isCountdownRunning, countdown]);
+
+  const handleCloseModal = async () => {
+    if (qaStatus === 'opened') {
+      const confirmClose = window.confirm('Closing this will end the question. Do you want to continue?');
+      if (!confirmClose) return;
+    }
+    // Set QACurrent with qaStatus "cleared"
+    const { errors } = await client.models.QACurrent.update({
+      groupId: selectedGroupId,
+      sessionId: '',
+      questionId: '',
+      duration: 0,
+      score: 0,
+      qa: '',
+      qaStatus: 'cleared',
+    });
+    if (errors) {
+      console.log('Error clearing QACurrent:', errors);
+    }
+    setIsModalOpen(false);
+  };
+
+  const handleStopNowClick = async () => {
+    // Set QACurrent with qaStatus "stopped"
+    closeQACurrent();
+    setCloseMessage('Manual closed.');
+  };
+
   return (
     <div className="space-y-8">
       {/* Group Information */}
@@ -353,8 +427,6 @@ const Home: React.FC = () => {
           </div>
         )}
       </InfoCard>
-
-     
 
       {/* Answer Options */}
       {selectedQuestionId && (
@@ -386,7 +458,7 @@ const Home: React.FC = () => {
             </div>
             <div className="flex justify-end space-x-3">
               <button
-                onClick={postToQACurrent}
+                onClick={handlePostNowClick}
                 disabled={isPosting || !selectedGroupId || !selectedSessionId || !selectedQuestionId}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -402,39 +474,45 @@ const Home: React.FC = () => {
                   'Post Now'
                 )}
               </button>
-
-
             </div>
           </div>
           <div className="space-y-4">
-
-
             {/* Answer Options */}
             {(
               <div className="mt-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Answer Options:</h4>
+                <div className="flex items-baseline mb-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2 mr-4">Answer Options:</h4>
+                  <input
+                    type="checkbox"
+                    id="toggle-correct-indicator"
+                    checked={showCorrectIndicator}
+                    onChange={toggleCorrectIndicator}
+                    className="toggle-checkbox ml-auto"
+                  />
+                  <label htmlFor="toggle-correct-indicator" className="text-sm font-medium text-gray-700  ml-2">Show Ans</label>
+                </div>
                 <div className="space-y-2">
                   {selectedAnsOptions.length === 0 ? (
                     <p className="text-sm text-gray-500">No answer options available</p>
                   ) : (
-                    selectedAnsOptions.map((ansOption) => (
-                      <div
-                        key={ansOption.id}
-                        className={`p-2 rounded-md ${ansOption.correct === 'true' ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200'}`}
-                      >
-                        <div className="flex items-center">
-                          <div className="flex-1">
-                            <p className="text-sm text-black">{ansOption.ansOption}</p>
-                            {ansOption.remark && (
-                              <p className="text-xs text-gray-500 mt-1">{ansOption.remark}</p>
+                    <div>
+
+                      {selectedAnsOptions.map(ansOption => (
+                        <div
+                          key={ansOption.id}
+                          className={`mb-2 p-2 rounded-md ${ansOption.correct === 'true' && showCorrectIndicator ? 'bg-green-50 border border-green-200' : 'bg-gray-50 border border-gray-200'}`}
+                        >
+                          <div className="flex items-center">
+                            <div className="flex-1">
+                              <p className="text-sm text-black">{ansOption.ansOption}</p>
+                            </div>
+                            {ansOption.correct === 'true' && showCorrectIndicator && (
+                              <span className="text-green-600 text-xs font-medium">Correct</span>
                             )}
                           </div>
-                          {ansOption.correct === 'true' && (
-                            <span className="text-green-600 text-xs font-medium">Correct</span>
-                          )}
                         </div>
-                      </div>
-                    ))
+                      ))}
+                    </div>
                   )}
                 </div>
                 <div>
@@ -586,6 +664,40 @@ const Home: React.FC = () => {
                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 {isUpdating ? 'Creating...' : 'Create'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Popup */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+          <div className="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <h3 className="text-lg leading-6 font-medium text-gray-500">
+                {selectedQuestion?.question}
+              </h3>
+              <div className="mt-2">
+                <p className="text-2xl text-center text-gray-900">
+                  {qaStatus === 'opened' && `${countdown}s`}
+                  {qaStatus === 'closed' && closeMessage}
+                </p>
+              </div>
+            </div>
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <button
+                type="button"
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                onClick={() => {
+                  if (qaStatus !== 'opened') {
+                    handleCloseModal();
+                  } else {
+                    handleStopNowClick();
+                  }
+                }}
+              >
+                {qaStatus !== 'opened' ? 'Close' : 'Stop Now'}
               </button>
             </div>
           </div>

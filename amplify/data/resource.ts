@@ -77,7 +77,6 @@ const schema = a.schema({
     questionId: a.string(),
     ansOption: a.string(),
     correct: a.string(),
-    remark: a.string(),
     createdBy: a.string(),
     modifiedBy: a.string(),
   }),

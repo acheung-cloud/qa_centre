@@ -758,13 +758,6 @@
               "isRequired": false,
               "attributes": []
             },
-            "remark": {
-              "name": "remark",
-              "isArray": false,
-              "type": "String",
-              "isRequired": false,
-              "attributes": []
-            },
             "createdBy": {
               "name": "createdBy",
               "isArray": false,
