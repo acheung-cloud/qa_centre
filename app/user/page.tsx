@@ -69,9 +69,30 @@ export default function UserDashboard() {
     setSelectedAnswer(index);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (selectedAnswer === null || !qaData) return;
     setIsSubmitted(true);
-    // Future implementation for submit logic
+    const responsePayload = {
+      Question: qaData.Question,
+      AnsOptions: qaData.AnsOptions.map(opt => ({ ansOption: opt.ansOption })),
+      SelectedIdx: [selectedAnswer.toString()]
+    };
+    try {
+      const { data, errors } = await client.models.ResponseLog.create({
+        qaRecord: JSON.stringify(responsePayload),
+        groupId: GROUP_ID,
+        sessionId: currentQA?.sessionId || "",
+        participantId: "default-participant",
+        entityId: currentQA?.entityId || ""
+      });
+      if (errors) {
+        console.error("Error creating response log:", errors);
+      } else {
+        console.log("Response log created:", data);
+      }
+    } catch (error) {
+      console.error("Error in handleSubmit", error);
+    }
   };
 
   return (

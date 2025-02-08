@@ -83,6 +83,7 @@ const schema = a.schema({
 
   QACurrent: a.model({
     qaStatus: a.ref('QAStatus'),
+    entityId: a.string(),
     groupId: a.string().required(),
     sessionId: a.string().required(),
     questionId: a.string().required(),
@@ -107,6 +108,7 @@ const schema = a.schema({
     status: a.ref('Status'),
     user: a.belongsTo('User', 'userId'),
     group: a.belongsTo('Group', 'groupId'),
+    responseLogs: a.hasMany('ResponseLog', 'participantId'),
     sessionScores: a.hasMany('SessionScore', 'participantId'),
     entityId: a.string(),
     groupId: a.string(),
@@ -121,6 +123,7 @@ const schema = a.schema({
   ResponseLog: a.model({
     question: a.belongsTo('Question', 'questionId'),
     session: a.belongsTo('Session', 'sessionId'),
+    participant: a.belongsTo('Participant', 'participantId'),
     entityId: a.string(),
     groupId: a.string(),
     sessionId: a.string(),

@@ -841,6 +841,13 @@
               "isRequired": false,
               "attributes": []
             },
+            "entityId": {
+              "name": "entityId",
+              "isArray": false,
+              "type": "String",
+              "isRequired": false,
+              "attributes": []
+            },
             "groupId": {
               "name": "groupId",
               "isArray": false,
@@ -1131,6 +1138,22 @@
                 ]
               }
             },
+            "responseLogs": {
+              "name": "responseLogs",
+              "isArray": true,
+              "type": {
+                "model": "ResponseLog"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "isArrayNullable": true,
+              "association": {
+                "connectionType": "HAS_MANY",
+                "associatedWith": [
+                  "participantId"
+                ]
+              }
+            },
             "sessionScores": {
               "name": "sessionScores",
               "isArray": true,
@@ -1297,6 +1320,21 @@
                 "connectionType": "BELONGS_TO",
                 "targetNames": [
                   "sessionId"
+                ]
+              }
+            },
+            "participant": {
+              "name": "participant",
+              "isArray": false,
+              "type": {
+                "model": "Participant"
+              },
+              "isRequired": false,
+              "attributes": [],
+              "association": {
+                "connectionType": "BELONGS_TO",
+                "targetNames": [
+                  "participantId"
                 ]
               }
             },

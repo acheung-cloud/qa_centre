@@ -262,7 +262,7 @@ const Home: React.FC = () => {
         Question: selectedQuestion.question,
         AnsOptions: selectedAnsOptions.map(opt => ({
           ansOption: opt.ansOption,
-          correct: opt.correct
+          id: opt.id,
         }))
       };
 
@@ -275,6 +275,7 @@ const Home: React.FC = () => {
         setQaStatus('opened');
         const { data: updatedQACurrent, errors: updateErrors } = await client.models.QACurrent.update({
           qaStatus: 'opened',
+          entityId: selectedQuestion?.entityId,
           groupId: selectedGroupId,
           sessionId: selectedSessionId,
           questionId: selectedQuestionId,
@@ -298,6 +299,7 @@ const Home: React.FC = () => {
         console.log('Update failed, attempting to create QACurrent');
         const { data: newQACurrent, errors: createErrors } = await client.models.QACurrent.create({
           qaStatus: 'opened',
+          entityId: selectedQuestion.entityId,
           groupId: selectedGroupId,
           sessionId: selectedSessionId,
           questionId: selectedQuestionId,
@@ -344,6 +346,7 @@ const Home: React.FC = () => {
   const closeQACurrent = async () => {
     setIsCountdownRunning(false);
     await client.models.QACurrent.update({
+      entityId: selectedQuestion?.entityId,
       groupId: selectedGroupId,
       sessionId: selectedSessionId,
       questionId: selectedQuestionId,
@@ -378,6 +381,7 @@ const Home: React.FC = () => {
     }
     // Set QACurrent with qaStatus "cleared"
     const { errors } = await client.models.QACurrent.update({
+      entityId: selectedQuestion?.entityId,
       groupId: selectedGroupId,
       sessionId: '',
       questionId: '',
