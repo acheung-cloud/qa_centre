@@ -79,11 +79,19 @@ export default function UserDashboard() {
     };
     try {
       const { data, errors } = await client.models.ResponseLog.create({
-        qaRecord: JSON.stringify(responsePayload),
+        entityId: currentQA?.entityId || "",
         groupId: GROUP_ID,
         sessionId: currentQA?.sessionId || "",
-        participantId: "default-participant",
-        entityId: currentQA?.entityId || ""
+        userId: "userId",
+        participantId: "participantId",
+        email: "test@gmail.com",
+        questionId: currentQA?.questionId || "",
+        responseTime: 0,
+        correctPercent: 0,
+        score: 0,
+        scoreMax: 0,
+        createdBy: "system",
+        qaRecord: JSON.stringify(responsePayload),
       });
       if (errors) {
         console.error("Error creating response log:", errors);

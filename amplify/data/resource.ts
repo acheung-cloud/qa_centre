@@ -136,6 +136,7 @@ const schema = a.schema({
     score: a.integer(),
     scoreMax: a.integer(),
     qaRecord: a.string(),
+    createdBy: a.string(),
   }),
 
   SessionScore: a.model({
