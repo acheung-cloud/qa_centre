@@ -2,8 +2,9 @@
 
 import { AuthUser } from '@aws-amplify/auth';
 import { Menu, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import type { Schema } from "@/amplify/data/resource";
+import CreateEntityModal from './CreateEntityModal';
 
 interface HeaderProps {
   signOut?: () => void;
@@ -11,9 +12,19 @@ interface HeaderProps {
   entities?: Array<Schema["Entity"]['type']>;
   selectedEntityId: string;
   onEntityChange: (entityId: string) => void;
+  onEntityCreated?: () => void;
 }
 
-export default function AdminHeader({ signOut, user, entities = [], selectedEntityId, onEntityChange }: HeaderProps) {
+export default function AdminHeader({ 
+  signOut, 
+  user, 
+  entities = [], 
+  selectedEntityId, 
+  onEntityChange,
+  onEntityCreated 
+}: HeaderProps) {
+  const [isCreateEntityModalOpen, setIsCreateEntityModalOpen] = useState(false);
+
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-8 shadow-sm">
       <div className="flex-1 flex items-center justify-center">
@@ -56,12 +67,19 @@ export default function AdminHeader({ signOut, user, entities = [], selectedEnti
                   onChange={(e) => onEntityChange(e.target.value)}
                   className="block w-full rounded-md border-gray-300 py-1.5 pl-3 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                 >
+                  <option value="">Select an entity</option>
                   {entities?.map((entity) => (
                     <option key={entity.id} value={entity.id}>
                       {entity.name}
                     </option>
                   ))}
                 </select>
+                <button
+                  onClick={() => setIsCreateEntityModalOpen(true)}
+                  className="mt-2 w-full text-left px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-md"
+                >
+                  + Create Entity
+                </button>
               </div>
               <Menu.Item>
                 {({ active }) => (
@@ -82,6 +100,12 @@ export default function AdminHeader({ signOut, user, entities = [], selectedEnti
           </Transition>
         </Menu>
       </div>
+
+      <CreateEntityModal 
+        isOpen={isCreateEntityModalOpen}
+        onClose={() => setIsCreateEntityModalOpen(false)}
+        onEntityCreated={onEntityCreated}
+      />
     </header>
   );
 }

@@ -14,6 +14,18 @@ const client = generateClient<Schema>();
 function CallHeader() {
   const { user, signOut } = useAuthenticator();
   const { entities, selectedEntityId, setSelectedEntityId } = useContext(AdminContext);
+
+  const handleEntityCreated = async () => {
+    try {
+      const { data } = await client.models.Entity.list();
+      if (data.length > 0) {
+        setSelectedEntityId(data[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching entities after creation:', error);
+    }
+  };
+
   return (
     <AdminHeader 
       signOut={signOut} 
@@ -21,6 +33,7 @@ function CallHeader() {
       entities={entities}
       selectedEntityId={selectedEntityId}
       onEntityChange={setSelectedEntityId}
+      onEntityCreated={handleEntityCreated}
     />
   );
 }
