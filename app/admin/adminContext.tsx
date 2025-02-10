@@ -16,8 +16,8 @@ interface AdminContextType {
   selectedQuestionId: string;
   setSelectedQuestionId: (id: string) => void;
   entities: Array<Schema["Entity"]['type']>;
-  groups: Schema["Group"]['type'][];
-  sessions: Schema["Session"]['type'][];
+  groups: Array<Schema["Group"]['type']>;
+  sessions: Array<Schema["Session"]['type']>;
 }
 
 export const AdminContext = createContext<AdminContextType>({
@@ -40,8 +40,8 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [selectedSessionId, setSelectedSessionId] = useState("");
   const [selectedQuestionId, setSelectedQuestionId] = useState("");
   const [entities, setEntities] = useState<Array<Schema["Entity"]['type']>>([]);
-  const [groups, setGroups] = useState<Schema["Group"]['type'][]>([]);
-  const [sessions, setSessions] = useState<Schema["Session"]['type'][]>([]);
+  const [groups, setGroups] = useState<Array<Schema["Group"]['type']>>([]);
+  const [sessions, setSessions] = useState<Array<Schema["Session"]['type']>>([]);
 
   // Fetch entities on mount
   useEffect(() => {
