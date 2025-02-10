@@ -22,7 +22,6 @@ interface QAData {
 }
 
 export default function UserDashboard() {
-  const GROUP_ID = "3c31dd6f-93f5-4ea1-9fda-065fabcf14d3";
 
   const [currentQA, setCurrentQA] = useState<Schema["QACurrent"]["type"] | null>(null);
   const [selAnsId, setSelAnsId] = useState<number | null>(null);
@@ -33,8 +32,10 @@ export default function UserDashboard() {
 
   useEffect(() => {
     // Subscribe to QACurrent changes
+    const groupId = process.env.NEXT_PUBLIC_GROUP_ID ?? "";
+    console.log("Subscribing to QACurrent changes. Group ID:", groupId);
     const sub = client.models.QACurrent.observeQuery({
-      filter: { groupId: { eq: GROUP_ID } }
+      filter: { groupId: { eq: groupId } }
     }).subscribe({
       next: ({ items }) => {
         if (items && items.length > 0) {
@@ -86,7 +87,7 @@ export default function UserDashboard() {
     
     try {
       const { success, data, errors } = await handleSubmitAnswerSrv({
-        groupId: GROUP_ID,
+        groupId: process.env.LISTEN_GROUP_ID ?? "",
         participantId: 'Participant1',
         qaRecord: JSON.stringify(qaData),
         selAnsOptionIds: selAnsOptionIds
