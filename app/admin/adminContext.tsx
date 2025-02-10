@@ -15,7 +15,7 @@ interface AdminContextType {
   setSelectedSessionId: (id: string) => void;
   selectedQuestionId: string;
   setSelectedQuestionId: (id: string) => void;
-  entities: { groups: Schema["Group"]['type'][] };
+  entities: Array<Schema["Entity"]['type']>;
   groups: Schema["Group"]['type'][];
   sessions: Schema["Session"]['type'][];
 }
@@ -29,7 +29,7 @@ export const AdminContext = createContext<AdminContextType>({
   setSelectedSessionId: () => {},
   selectedQuestionId: "",
   setSelectedQuestionId: () => {},
-  entities: { groups: [] },
+  entities: [],
   groups: [],
   sessions: []
 });
@@ -39,7 +39,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [selectedSessionId, setSelectedSessionId] = useState("");
   const [selectedQuestionId, setSelectedQuestionId] = useState("");
-  const [entities, setEntities] = useState<{ groups: Schema["Group"]['type'][] }>({ groups: [] });
+  const [entities, setEntities] = useState<Array<Schema["Entity"]['type']>>([]);
   const [groups, setGroups] = useState<Schema["Group"]['type'][]>([]);
   const [sessions, setSessions] = useState<Schema["Session"]['type'][]>([]);
 
@@ -47,13 +47,11 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function fetchEntities() {
       try {
-        const { data } = await client.models.Group.list({
-          filter: { entityId: { attributeExists: false } }
-        });
-        setEntities({ groups: data });
+        const { data } = await client.models.Entity.list();
+        setEntities(data);
       } catch (error) {
         console.error('Error fetching entities:', error);
-        setEntities({ groups: [] });
+        setEntities([]);
       }
     }
     fetchEntities();
