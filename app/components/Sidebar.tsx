@@ -8,7 +8,7 @@ import { generateClient } from "aws-amplify/api";
 const client = generateClient<Schema>();
 
 interface SidebarProps {
-  entities: { groups: Schema["Group"]['type'][] };
+  entities: Array<Schema["Entity"]['type']>;
   selectedEntityId: string;
   onEntityChange: (entityId: string) => void;
   groups: Array<Schema["Group"]['type']>;

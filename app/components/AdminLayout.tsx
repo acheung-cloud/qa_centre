@@ -43,7 +43,7 @@ export default function AdminLayout({
     selectedQuestionId,
     setSelectedQuestionId
   } = useContext(AdminContext);
-  const [questions, setQuestions] = useState<Schema["Question"]["type"][]>([]);
+  const [questions, setQuestions] = useState<Array<Schema["Question"]["type"]>>([]);
 
   // Fetch questions for selected session
   useEffect(() => {
