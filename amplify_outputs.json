@@ -593,14 +593,14 @@
             "score": {
               "name": "score",
               "isArray": false,
-              "type": "Int",
+              "type": "Float",
               "isRequired": false,
               "attributes": []
             },
             "duration": {
               "name": "duration",
               "isArray": false,
-              "type": "Int",
+              "type": "Float",
               "isRequired": false,
               "attributes": []
             },
@@ -879,14 +879,21 @@
             "score": {
               "name": "score",
               "isArray": false,
-              "type": "Int",
+              "type": "Float",
               "isRequired": true,
               "attributes": []
             },
             "duration": {
               "name": "duration",
               "isArray": false,
-              "type": "Int",
+              "type": "Float",
+              "isRequired": true,
+              "attributes": []
+            },
+            "startTime": {
+              "name": "startTime",
+              "isArray": false,
+              "type": "AWSDateTime",
               "isRequired": true,
               "attributes": []
             },
@@ -1286,13 +1293,6 @@
         "ResponseLog": {
           "name": "ResponseLog",
           "fields": {
-            "id": {
-              "name": "id",
-              "isArray": false,
-              "type": "ID",
-              "isRequired": true,
-              "attributes": []
-            },
             "question": {
               "name": "question",
               "isArray": false,
@@ -1377,41 +1377,41 @@
               "name": "email",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "questionId": {
               "name": "questionId",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "responseTime": {
               "name": "responseTime",
               "isArray": false,
-              "type": "Int",
+              "type": "Float",
               "isRequired": false,
               "attributes": []
             },
             "correctPercent": {
               "name": "correctPercent",
               "isArray": false,
-              "type": "Int",
+              "type": "Float",
               "isRequired": false,
               "attributes": []
             },
             "score": {
               "name": "score",
               "isArray": false,
-              "type": "Int",
+              "type": "Float",
               "isRequired": false,
               "attributes": []
             },
             "scoreMax": {
               "name": "scoreMax",
               "isArray": false,
-              "type": "Int",
+              "type": "Float",
               "isRequired": false,
               "attributes": []
             },
@@ -1454,6 +1454,15 @@
               "properties": {}
             },
             {
+              "type": "key",
+              "properties": {
+                "fields": [
+                  "questionId",
+                  "email"
+                ]
+              }
+            },
+            {
               "type": "auth",
               "properties": {
                 "rules": [
@@ -1481,9 +1490,11 @@
             }
           ],
           "primaryKeyInfo": {
-            "isCustomPrimaryKey": false,
-            "primaryKeyFieldName": "id",
-            "sortKeyFieldNames": []
+            "isCustomPrimaryKey": true,
+            "primaryKeyFieldName": "questionId",
+            "sortKeyFieldNames": [
+              "email"
+            ]
           }
         },
         "SessionScore": {
@@ -1564,7 +1575,7 @@
             "score": {
               "name": "score",
               "isArray": false,
-              "type": "Int",
+              "type": "Float",
               "isRequired": false,
               "attributes": []
             },

@@ -61,8 +61,8 @@ const schema = a.schema({
     sessionId: a.string(),
     question: a.string(),
     remark: a.string(),
-    score: a.integer(),
-    duration: a.integer(),
+    score: a.float(),
+    duration: a.float(),
     order: a.integer(),
     createdBy: a.string(),
     modifiedBy: a.string(),
@@ -88,8 +88,9 @@ const schema = a.schema({
     sessionId: a.string().required(),
     questionId: a.string().required(),
     qa: a.string().required(),  // For storing the QA JSON object
-    score: a.integer().required(),
-    duration: a.integer().required(),
+    score: a.float().required(),
+    duration: a.float().required(),
+    startTime: a.datetime().required(),
     modifiedBy: a.string().required(),
   })
   .identifier(['groupId']),
@@ -129,15 +130,16 @@ const schema = a.schema({
     sessionId: a.string(),
     userId: a.string(),
     participantId: a.string(),
-    email: a.string(),
-    questionId: a.string(),
-    responseTime: a.integer(),
-    correctPercent: a.integer(),
-    score: a.integer(),
-    scoreMax: a.integer(),
+    email: a.string().required(),
+    questionId: a.string().required(),
+    responseTime: a.float(),
+    correctPercent: a.float(),
+    score: a.float(),
+    scoreMax: a.float(),
     qaRecord: a.string(),
     createdBy: a.string(),
-  }),
+  })
+  .identifier(['questionId', 'email']),
 
   SessionScore: a.model({
     participant: a.belongsTo('Participant', 'participantId'),
@@ -147,7 +149,7 @@ const schema = a.schema({
     sessionId: a.string(),
     participantId: a.string(),
     email: a.string(),
-    score: a.integer(),
+    score: a.float(),
   }),
 
   QALog: a.model({

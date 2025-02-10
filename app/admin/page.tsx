@@ -5,6 +5,9 @@ import { AdminContext } from "./adminContext";
 import { generateClient } from "aws-amplify/api";
 import type { Schema } from "@/amplify/data/resource";
 
+// Server components
+import { handleQACurrentOpen, handleQACurrentClose, handleQACurrentClear } from "../components/AdminSubmitHandlers";
+
 const client = generateClient<Schema>();
 
 interface InfoCardProps {
@@ -262,66 +265,36 @@ const Home: React.FC = () => {
         Question: selectedQuestion.question,
         AnsOptions: selectedAnsOptions.map(opt => ({
           ansOption: opt.ansOption,
-          id: opt.id,
+          ansOptionId: opt.id,
         }))
       };
 
-      const qaData = JSON.stringify(qa);
-      console.log('QA Data:', qaData);
+      // const qaData = JSON.stringify(qa);
 
       let result;
       try {
         console.log('Attempting to update QACurrent');
         setQaStatus('opened');
-        const { data: updatedQACurrent, errors: updateErrors } = await client.models.QACurrent.update({
-          qaStatus: 'opened',
-          entityId: selectedQuestion?.entityId,
+
+        const { success, data, errors } = await handleQACurrentOpen({
+          entityId: selectedQuestion?.entityId ?? '',
           groupId: selectedGroupId,
           sessionId: selectedSessionId,
           questionId: selectedQuestionId,
-          qa: qaData,
-          score: selectedQuestion.score,
-          duration: selectedQuestion.duration,
-          modifiedBy: "admin"
+          qa: qa,
+          score: selectedQuestion.score ?? 0,
+          duration: selectedQuestion.duration ?? 0,
         });
 
-        if (updateErrors) {
-          console.error('Errors updating QACurrent:', updateErrors);
-          throw new Error(updateErrors[0]?.message || 'Failed to update QACurrent');
+        if (errors) {
+          console.error('Errors opening QACurrent:', errors);
+          throw new Error(errors[0]?.message || 'Failed to open QACurrent');
         }
 
-        if (!updatedQACurrent) {
-          throw new Error('No data returned from QACurrent update');
-        }
-
-        result = updatedQACurrent;
+        result = data;
       } catch (updateError) {
-        console.log('Update failed, attempting to create QACurrent');
-        const { data: newQACurrent, errors: createErrors } = await client.models.QACurrent.create({
-          qaStatus: 'opened',
-          entityId: selectedQuestion.entityId,
-          groupId: selectedGroupId,
-          sessionId: selectedSessionId,
-          questionId: selectedQuestionId,
-          qa: qaData,
-          score: selectedQuestion.score,
-          duration: selectedQuestion.duration,
-          modifiedBy: "admin"
-        });
-
-        if (createErrors) {
-          console.error('Errors creating QACurrent:', createErrors);
-          throw new Error(createErrors[0]?.message || 'Failed to create QACurrent');
-        }
-
-        if (!newQACurrent) {
-          throw new Error('No data returned from QACurrent creation');
-        }
-
-        result = newQACurrent;
-      }
-      if (!result) {
-        throw new Error('QACurrent creation/update failed');
+        console.error('Error updating QACurrent:', updateError);
+        throw new Error('Failed to update QACurrent');
       }
 
     } catch (error) {
@@ -345,13 +318,7 @@ const Home: React.FC = () => {
 
   const closeQACurrent = async () => {
     setIsCountdownRunning(false);
-    await client.models.QACurrent.update({
-      entityId: selectedQuestion?.entityId,
-      groupId: selectedGroupId,
-      sessionId: selectedSessionId,
-      questionId: selectedQuestionId,
-      qaStatus: 'closed',
-    });
+    await handleQACurrentClose({ groupId: selectedGroupId});
     setQaStatus('closed');
   }
 
@@ -380,16 +347,7 @@ const Home: React.FC = () => {
       if (!confirmClose) return;
     }
     // Set QACurrent with qaStatus "cleared"
-    const { errors } = await client.models.QACurrent.update({
-      entityId: selectedQuestion?.entityId,
-      groupId: selectedGroupId,
-      sessionId: '',
-      questionId: '',
-      duration: 0,
-      score: 0,
-      qa: '',
-      qaStatus: 'cleared',
-    });
+    const { errors } = await handleQACurrentClear({ groupId: selectedGroupId });
     if (errors) {
       console.log('Error clearing QACurrent:', errors);
     }
