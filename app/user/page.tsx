@@ -8,8 +8,6 @@ import outputs from "@/amplify_outputs.json";
 
 import { handleSubmitAnswerSrv } from "../components/UserSubmitHandlers";
 
-Amplify.configure(outputs);
-
 const client = generateClient<Schema>();
 
 interface QAData {
