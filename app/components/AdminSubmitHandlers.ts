@@ -38,28 +38,35 @@ export const handleQACurrentOpen = async (input: {
         });
 
         if (errors) {
-            console.error("Error creating QACurrent:", errors);
-            return { success: false, errors };
+            console.log("Error returned when updating QACurrent:", errors);
+            console.log("Attempting to create QACurrent instead.");
+            const { data: newQACurrent, errors: createErrors } = await cookiesClient.models.QACurrent.create({
+                qaStatus: 'opened',
+                entityId: input.entityId,
+                groupId: input.groupId,
+                sessionId: input.sessionId,
+                questionId: input.questionId,
+                qa: qaStr,
+                score: input.score,
+                duration: input.duration,
+                startTime: new Date().toISOString().split('.')[0] + 'Z',
+                modifiedBy: email ?? ''
+            });
+
+            if (createErrors) {
+                console.error("Create failed.Error in handleSubmit", createErrors);
+                return { success: false, errors: createErrors };
+            } else {
+                console.log("QACurrent created successfully:", newQACurrent);
+                return { success: true, data: newQACurrent };
+            }
         } else {
-            console.log("QACurrent created:", data);
+            console.log("QACurrent updated successfully:", data);
             return { success: true, data };
         }
     } catch (error) {
-        console.log('Update failed, attempting to create QACurrent');
-        const { data: newQACurrent, errors: createErrors } = await cookiesClient.models.QACurrent.create({
-            qaStatus: 'opened',
-            entityId: input.entityId,
-            groupId: input.groupId,
-            sessionId: input.sessionId,
-            questionId: input.questionId,
-            qa: qaStr,
-            score: input.score,
-            duration: input.duration,
-            startTime: new Date().toISOString().split('.')[0] + 'Z',
-            modifiedBy: email ?? ''
-        });
-        console.error("Error in handleSubmit", createErrors);
-        return { success: false, errors: createErrors };
+        console.error("Error in handleQACurrentOpen", error);
+        return { success: false, errors: error };
     }
 };
 
