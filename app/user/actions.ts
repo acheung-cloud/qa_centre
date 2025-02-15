@@ -7,12 +7,12 @@ export const handleSubmitAnswerSrv = async (input: {
   participantId: string;
   qaRecord: string;
   selAnsOptionIds: string[];
-}): Promise<{ success: boolean; data?: any; errors?: any }> => {
+}): Promise<{ success: boolean; data?: any; errors?: string[] }> => {
   const user = await AuthGetCurrentUserServer();
 
   if (!user) {
     console.log('User not found');
-    return { success: false, errors: 'User not found' };
+    return { success: false, errors: ['User not found'] };
   }
 
   try {
@@ -22,19 +22,19 @@ export const handleSubmitAnswerSrv = async (input: {
     const { data: qaCurrent } = await cookiesClient.models.QACurrent.get({groupId: input.groupId});
     if (!qaCurrent) {
       console.log('QA Current not found');
-      return { success: false, errors: 'QA Current not found' };
+      return { success: false, errors: ['QA Current not found'] };
     }
     // Get the question
-    const { data: question } = await cookiesClient.models.Question.get({id: qaCurrent.questionId});
+    const { data: question, errors: getQErrors } = await cookiesClient.models.Question.get({id: qaCurrent.questionId});
     if (!question) {
-      console.log('Question not found');
-      return { success: false, errors: 'Question not found' };
+      console.log('Question not found. ', getQErrors);
+      return { success: false, errors: getQErrors?.map(err => err.message) };
     }
     // Get Answers
-    const { data: ansOptions } = await question.ansOptions();
+    const { data: ansOptions, errors: getAOErrors } = await question.ansOptions();
     if (!ansOptions) {
       console.log('Answers not found');
-      return { success: false, errors: 'Answers not found' };
+      return { success: false, errors: ['Answers not found'] };
     }
 
     // Get the response time
@@ -52,7 +52,7 @@ export const handleSubmitAnswerSrv = async (input: {
     const score = (correctNum / totalCorrect) * maxScore;
     const correctPercent = (correctNum / totalCorrect) * 100;
 
-    const { data, errors } = await cookiesClient.models.ResponseLog.create({
+    const { data, errors: createRespErrors } = await cookiesClient.models.ResponseLog.create({
       entityId: qaCurrent.entityId || "",
       groupId: input.groupId,
       sessionId: qaCurrent.sessionId || "",
@@ -68,15 +68,19 @@ export const handleSubmitAnswerSrv = async (input: {
       qaRecord: input.qaRecord,
     });
 
-    if (errors) {
-      console.error("Error creating response log:", errors);
-      return { success: false, errors: errors };
+    if (createRespErrors) {
+      if (createRespErrors.length >= 1 && createRespErrors[0].errorType === 'DynamoDB:ConditionalCheckFailedException') {
+        console.log('Response log already exists');
+        return { success: false, errors: ['Response already exists'] };
+      }
+      console.error("Error creating response log:", createRespErrors);
+      return { success: false, errors: createRespErrors.map(err => err.message) };
     } else {
       console.log("Response log created:", data);
       return { success: true };
     }
   } catch (error) {
     console.error("Error in handleSubmit", error);
-    return { success: false, errors: error };
+    return { success: false, errors: ["Error catched"] };
   }
 };

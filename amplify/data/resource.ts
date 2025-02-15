@@ -99,11 +99,12 @@ const schema = a.schema({
     status: a.ref('Status'),
     participants: a.hasMany('Participant', 'userId'),
     name: a.string(),
-    email: a.string(),
+    email: a.string().required(),
     loginDT: a.datetime(),
     modifiedBy: a.string(),
     modifiedAt: a.datetime(),
-  }),
+  })
+  .identifier(['email']),
 
   Participant: a.model({
     status: a.ref('Status'),

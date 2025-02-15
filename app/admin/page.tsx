@@ -7,7 +7,7 @@ import type { Schema } from "@/amplify/data/resource";
 import InfoCard from "../components/InfoCard";
 
 // Server components
-import { handleQACurrentOpen, handleQACurrentClose, handleQACurrentClear } from "../components/AdminSubmitHandlers";
+import { handleQACurrentOpen, handleQACurrentClose, handleQACurrentClear } from "./actions";
 
 const client = generateClient<Schema>();
 

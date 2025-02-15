@@ -1,12 +1,9 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/api";
 import type { Schema } from "@/amplify/data/resource";
-import outputs from "@/amplify_outputs.json";
-
-import { handleSubmitAnswerSrv } from "../components/UserSubmitHandlers";
+import { handleSubmitAnswerSrv } from "./actions";
 
 const client = generateClient<Schema>();
 
@@ -19,6 +16,8 @@ interface QAData {
   AnsIdx: string[];
 }
 
+const groupId = process.env.NEXT_PUBLIC_GROUP_ID ?? "";
+
 export default function UserDashboard() {
 
   const [currentQA, setCurrentQA] = useState<Schema["QACurrent"]["type"] | null>(null);
@@ -30,7 +29,7 @@ export default function UserDashboard() {
 
   useEffect(() => {
     // Subscribe to QACurrent changes
-    const groupId = process.env.NEXT_PUBLIC_GROUP_ID ?? "";
+    
     console.log("Subscribing to QACurrent changes. Group ID:", groupId);
     const sub = client.models.QACurrent.observeQuery({
       filter: { groupId: { eq: groupId } }
@@ -53,6 +52,8 @@ export default function UserDashboard() {
 
   useEffect(() => {
     if (currentQA?.qaStatus === 'cleared') {
+      setErrorMessage(null);
+      setIsSubmitted(false);
       setCurrentQA(null);
     }
   }, [currentQA]);
@@ -85,13 +86,13 @@ export default function UserDashboard() {
     
     try {
       const { success, data, errors } = await handleSubmitAnswerSrv({
-        groupId: process.env.LISTEN_GROUP_ID ?? "",
+        groupId: groupId,
         participantId: 'Participant1',
         qaRecord: JSON.stringify(qaData),
         selAnsOptionIds: selAnsOptionIds
       });
       if (errors) {
-        setErrorMessage("Response not accepted. You've already responded to this question");
+        setErrorMessage("Not accepted: " + errors.join(', '));
         setIsSubmitted(false);
       }
     } catch (error) {
@@ -147,7 +148,7 @@ export default function UserDashboard() {
                   <button
                     className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handleSubmit}
-                    disabled={isSubmitted || selAnsId === null}
+                    disabled={isSubmitted || selAnsId === null || errorMessage !== null}
                   >
                     Submit
                   </button>

@@ -14,7 +14,7 @@ export default function UserHeader({ signOut, user }: HeaderProps) {
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-8 shadow-sm">
       <div className="flex items-center gap-x-4">
         <h2 className="text-lg font-medium text-gray-800">
-          Welcome, <span className="font-semibold text-blue-600">{user?.signInDetails?.loginId}</span>
+          Welcome to QA Centre
         </h2>
       </div>
       <div className="flex items-center gap-x-4">
