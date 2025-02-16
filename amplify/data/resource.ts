@@ -103,34 +103,33 @@ const schema = a.schema({
     loginDT: a.datetime(),
     modifiedBy: a.string(),
     modifiedAt: a.datetime(),
-  })
-  .identifier(['email']),
+  }),
 
   Participant: a.model({
     status: a.ref('Status'),
     user: a.belongsTo('User', 'userId'),
     group: a.belongsTo('Group', 'groupId'),
-    responseLogs: a.hasMany('ResponseLog', 'participantId'),
     sessionScores: a.hasMany('SessionScore', 'participantId'),
-    entityId: a.string(),
-    groupId: a.string(),
-    userId: a.string(),
-    email: a.string(),
+    entityId: a.string().required(),
+    groupId: a.string().required(),
+    userId: a.string().required(),
+    email: a.string().required(),
     registerDT: a.datetime(),
-    loginDT: a.datetime(),
     createdBy: a.string(),
     modifiedBy: a.string(),
   }),
 
-  ResponseLog: a.model({
+  ResponseLog: a
+  .model({
+    sk1: a.string().required(),
+    sk2: a.string().required(),
     question: a.belongsTo('Question', 'questionId'),
     session: a.belongsTo('Session', 'sessionId'),
-    participant: a.belongsTo('Participant', 'participantId'),
-    entityId: a.string(),
-    groupId: a.string(),
+    entityId: a.string().required(),
+    groupId: a.string().required(),
     sessionId: a.string(),
-    userId: a.string(),
-    participantId: a.string(),
+    userId: a.string().required(),
+    participantId: a.string().required(),
     email: a.string().required(),
     questionId: a.string().required(),
     responseTime: a.float(),
@@ -140,7 +139,12 @@ const schema = a.schema({
     qaRecord: a.string(),
     createdBy: a.string(),
   })
-  .identifier(['questionId', 'email']),
+  .secondaryIndexes((index) => [
+    index('groupId')
+    .sortKeys(['sk2'])
+    .name('UserIndex'),
+  ])
+  .identifier(['groupId', 'sk1']),
 
   SessionScore: a.model({
     participant: a.belongsTo('Participant', 'participantId'),

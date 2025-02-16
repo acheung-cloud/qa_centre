@@ -1015,7 +1015,7 @@
               "name": "email",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "loginDT": {
@@ -1145,22 +1145,6 @@
                 ]
               }
             },
-            "responseLogs": {
-              "name": "responseLogs",
-              "isArray": true,
-              "type": {
-                "model": "ResponseLog"
-              },
-              "isRequired": false,
-              "attributes": [],
-              "isArrayNullable": true,
-              "association": {
-                "connectionType": "HAS_MANY",
-                "associatedWith": [
-                  "participantId"
-                ]
-              }
-            },
             "sessionScores": {
               "name": "sessionScores",
               "isArray": true,
@@ -1181,39 +1165,32 @@
               "name": "entityId",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "groupId": {
               "name": "groupId",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "userId": {
               "name": "userId",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "email": {
               "name": "email",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "registerDT": {
               "name": "registerDT",
-              "isArray": false,
-              "type": "AWSDateTime",
-              "isRequired": false,
-              "attributes": []
-            },
-            "loginDT": {
-              "name": "loginDT",
               "isArray": false,
               "type": "AWSDateTime",
               "isRequired": false,
@@ -1293,6 +1270,20 @@
         "ResponseLog": {
           "name": "ResponseLog",
           "fields": {
+            "sk1": {
+              "name": "sk1",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
+            "sk2": {
+              "name": "sk2",
+              "isArray": false,
+              "type": "String",
+              "isRequired": true,
+              "attributes": []
+            },
             "question": {
               "name": "question",
               "isArray": false,
@@ -1323,33 +1314,18 @@
                 ]
               }
             },
-            "participant": {
-              "name": "participant",
-              "isArray": false,
-              "type": {
-                "model": "Participant"
-              },
-              "isRequired": false,
-              "attributes": [],
-              "association": {
-                "connectionType": "BELONGS_TO",
-                "targetNames": [
-                  "participantId"
-                ]
-              }
-            },
             "entityId": {
               "name": "entityId",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "groupId": {
               "name": "groupId",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "sessionId": {
@@ -1363,14 +1339,14 @@
               "name": "userId",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "participantId": {
               "name": "participantId",
               "isArray": false,
               "type": "String",
-              "isRequired": false,
+              "isRequired": true,
               "attributes": []
             },
             "email": {
@@ -1457,8 +1433,19 @@
               "type": "key",
               "properties": {
                 "fields": [
-                  "questionId",
-                  "email"
+                  "groupId",
+                  "sk1"
+                ]
+              }
+            },
+            {
+              "type": "key",
+              "properties": {
+                "name": "UserIndex",
+                "queryField": "listResponseLogByGroupIdAndSk2",
+                "fields": [
+                  "groupId",
+                  "sk2"
                 ]
               }
             },
@@ -1491,9 +1478,9 @@
           ],
           "primaryKeyInfo": {
             "isCustomPrimaryKey": true,
-            "primaryKeyFieldName": "questionId",
+            "primaryKeyFieldName": "groupId",
             "sortKeyFieldNames": [
-              "email"
+              "sk1"
             ]
           }
         },

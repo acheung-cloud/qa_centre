@@ -52,7 +52,14 @@ export const handleSubmitAnswerSrv = async (input: {
     const score = (correctNum / totalCorrect) * maxScore;
     const correctPercent = (correctNum / totalCorrect) * 100;
 
+    //sk1 sessionId#questionId#participantId
+    const sk1 = `${qaCurrent.sessionId}#${qaCurrent.questionId}#${input.participantId}`;
+    //sk2 participantId#sessionId#questionId
+    const sk2 = `${input.participantId}#${qaCurrent.sessionId}#${qaCurrent.questionId}`;
+
     const { data, errors: createRespErrors } = await cookiesClient.models.ResponseLog.create({
+      sk1: sk1,
+      sk2: sk2,
       entityId: qaCurrent.entityId || "",
       groupId: input.groupId,
       sessionId: qaCurrent.sessionId || "",
