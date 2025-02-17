@@ -59,10 +59,19 @@ const Home: React.FC = () => {
   const [qaStatus, setQaStatus] = useState('');
   const [closeMessage, setCloseMessage] = useState('');
   const [showCorrectIndicator, setShowCorrectIndicator] = useState(false);
+  const [responseLogs, setResponseLogs] = useState<Array<Schema["ResponseLog"]["type"] | null>>([]);
+  const [respSub, setRespSub] = useState<any>(null);
 
   const toggleCorrectIndicator = () => {
     setShowCorrectIndicator(prev => !prev);
   };
+
+  // unsubscribe from subscription if any when exit
+  useEffect(() => {
+    return () => {
+      respSub?.unsubscribe();
+    };
+  }, []);
 
   // Fetch group details when group ID changes
   useEffect(() => {
@@ -204,7 +213,6 @@ const Home: React.FC = () => {
       return;
     }
 
-    setIsPosting(true);
     try {
       const qa = {
         Question: selectedQuestion.question,
@@ -213,8 +221,6 @@ const Home: React.FC = () => {
           ansOptionId: opt.id,
         }))
       };
-
-      // const qaData = JSON.stringify(qa);
 
       let result;
       try {
@@ -235,8 +241,13 @@ const Home: React.FC = () => {
           console.error('Errors opening QACurrent:', errors);
           throw new Error(errors[0]?.message || 'Failed to open QACurrent');
         }
+        // Post QACurrent successful.
+        // Show popup
+        setIsPosting(true);
 
-        result = data;
+        // Observe to the ResponseLog
+        subscribeResponseLog();
+
       } catch (updateError) {
         console.error('Error updating QACurrent:', updateError);
         throw new Error('Failed to update QACurrent');
@@ -253,6 +264,35 @@ const Home: React.FC = () => {
       setIsPosting(false);
     }
   };
+
+  const subscribeResponseLog = () => {
+
+    unsubscribeResponseLog();
+    const sub = client.models.ResponseLog.observeQuery({
+      filter: { 
+        groupId: { eq: selectedGroupId },
+        // sk1 beginswith sessionId#questionId#
+        sk1: { beginsWith: `${selectedSessionId}#${selectedQuestionId}` },
+      }
+    }).subscribe({
+      next: ({ items }) => {
+        if (items && items.length > 0) {
+          setResponseLogs(items); // Take the first item as current QA
+        } else {
+          setResponseLogs([]);
+        }
+      },
+      error: (error) => console.error('Subscription error:', error)
+    });
+    setRespSub(sub);
+  }
+
+  const unsubscribeResponseLog = () => {
+    if (respSub){
+      respSub.unsubscribe();
+      setRespSub(null);
+    }
+  }
 
   const handlePostNowClick = async () => {
     await postToQACurrent();
@@ -296,6 +336,7 @@ const Home: React.FC = () => {
     if (errors) {
       console.log('Error clearing QACurrent:', errors);
     }
+    unsubscribeResponseLog();
     setIsModalOpen(false);
   };
 
@@ -589,6 +630,11 @@ const Home: React.FC = () => {
                 <p className="text-2xl text-center text-gray-900">
                   {qaStatus === 'opened' && `${countdown}s`}
                   {qaStatus === 'closed' && closeMessage}
+                </p>
+              </div>
+              <div className="mt-2">
+                <p className="text-2xl text-center text-gray-900">
+                  {`Responsed: ${responseLogs.length}`}
                 </p>
               </div>
             </div>

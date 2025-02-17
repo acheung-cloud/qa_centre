@@ -24,22 +24,23 @@ interface QAData {
 export default function UserDashboard() {
 
   const [currentQA, setCurrentQA] = useState<Schema["QACurrent"]["type"] | null>(null);
+  const [subQaCur, setSubQaCur] = useState<any>(null);
   const [selAnsId, setSelAnsId] = useState<number | null>(null);
   const [selAnsOptionId, setSelAnsOptionId] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [shuffledOptions, setShuffledOptions] = useState<QAData["AnsOptions"]>([]);
-  const [participants, setParticipants] = useState<Schema["Participant"]["type"][]>([]);
+  const [participants, setParticipants] = useState<Array<Schema["Participant"]["type"]> | null>(null);
   const [selGroupId, setSelGroupId] = useState<string>("");
   const [selParticipantId, setSelParticipantId] = useState<string>("");
   const [loginUserEmail, setLoginUserEmail] = useState<string>("");
   const [loginUserId, setLoginUserId] = useState<string>("");
   const [currentUser, setCurrentUser] = useState<Schema["User"]["type"] | null>(null);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
-  const [sub, setSub] = useState<any>(null);
   const [participantGroups, setParticipantGroups] = useState<Map<string, Schema["Group"]["type"]>>(new Map());
+  const [joinBtnLabel, setJoinBtnLabel] = useState("Join Now");
 
-  const qaData = currentQA?.qa ? JSON.parse(currentQA.qa) as QAData : undefined;
+
 
   // Page start
   useEffect(() => {
@@ -47,16 +48,19 @@ export default function UserDashboard() {
     fetchUserAndParticipants();
   }, []);
 
-
   useEffect(() => {
-    
-
     return () => {
-      if (sub) {
-        sub.unsubscribe();
-      }
+      unsubscribeResponseLog();
     };
   }, []);
+
+  useEffect(() => {
+    if (subQaCur === null) {
+      setJoinBtnLabel('Join Now');
+    } else {
+      setJoinBtnLabel('Leave');
+    }
+  }, [subQaCur]);
 
   useEffect(() => {
     if (currentQA?.qaStatus === 'cleared') {
@@ -75,6 +79,15 @@ export default function UserDashboard() {
       setShuffledOptions([]);
     }
   }, [currentQA]);
+
+  useEffect(() => {
+    // new update of Participants
+    if (participants !== null && participants.length > 0) {
+      handleGroupSelByParti(participants[0].id)
+    } else {
+      handleGroupSelByParti('');
+    }
+  }, [participants]);
 
   // Fetch user and participants
   const fetchUserAndParticipants = async () => {
@@ -96,7 +109,7 @@ export default function UserDashboard() {
 
       setCurrentUser(userData);
 
-      
+
       if (!userData || !userData.name) {
         // Show name input modal if user hasn't set their name
         setShowProfileEdit(true);
@@ -124,6 +137,7 @@ export default function UserDashboard() {
           }
           setParticipantGroups(groupsMap);
           setParticipants(participantsData);
+
         }
       }
     } catch (error) {
@@ -131,16 +145,23 @@ export default function UserDashboard() {
     }
   };
 
-  const subscribeToQACurrent = (groupId: string) => {
+  const unsubscribeResponseLog = () => {
     // Unsubscribe from previous subscription
-    if (sub) {
-      sub.unsubscribe();
-      setSub(null);
+    if (subQaCur) {
+      subQaCur.unsubscribe();
+      setSubQaCur(null);
     }
+  };
+
+  const subscribeToQACurrent = () => {
+    const groupId = selGroupId;
+    if (!groupId || groupId === '') return;
+    // Unsubscribe from previous subscription
+    unsubscribeResponseLog();
     // Subscribe to QACurrent changes
     console.log("Subscribing to QACurrent changes. Group ID:", groupId);
     const curSub = client.models.QACurrent.observeQuery({
-      filter: { groupId: { eq: groupId }}
+      filter: { groupId: { eq: groupId } }
     }).subscribe({
       next: ({ items }) => {
         if (items && items.length > 0) {
@@ -152,7 +173,7 @@ export default function UserDashboard() {
       },
       error: (error) => console.error('Subscription error:', error)
     });
-    setSub(curSub);
+    setSubQaCur(curSub);
   };
 
 
@@ -161,19 +182,16 @@ export default function UserDashboard() {
     setSelAnsOptionId(shuffledOptions[index].ansOptionId);
     console.log("Selected answer options: ", shuffledOptions);
     console.log("Selected answer option idx: ", index);
-
-    // client.models.ResponseLog.list({
-    //   questionId: "hello",
-    //   email: {eq : "email"},
-    // });
   };
 
 
   const handleSubmit = async () => {
-    if (selAnsId === null || !qaData) return;
+    if (selAnsId === null) return;
     setIsSubmitted(true);
     setErrorMessage(null);
     const selAnsOptionIds = [selAnsOptionId];
+
+    const qaData = currentQA?.qa ? JSON.parse(currentQA.qa) as QAData : undefined;
 
     try {
       const { success, data, errors } = await handleSubmitAnswerSrv({
@@ -193,6 +211,14 @@ export default function UserDashboard() {
     }
   };
 
+  const handleGroupSelByParti = (participantId: string) => {
+    if (participantId) {
+      const groupId = participantGroups.get(participantId)?.id ?? "";
+      setSelGroupId(groupId);
+      setSelParticipantId(participantId);
+    }
+  }
+
   return (
     <div className="py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
@@ -201,31 +227,44 @@ export default function UserDashboard() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
         <div className="py-4">
           {/* Participant Selection Dropdown */}
-          <div className="mb-6">
-            <label htmlFor="participant" className="block text-sm font-medium text-gray-700">
-              Select Participant
-            </label>
+          <div className="flex items-center space-x-2 mb-4">
             <select
               id="participant"
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
               value={selParticipantId}
+              disabled={subQaCur !== null || participants === null || participants.length === 0}
               onChange={(e) => {
                 const participantId = e.target.value;
-                const groupId = participantGroups.get(participantId)?.id ?? "";
-                setSelGroupId(groupId);
-                setSelParticipantId(participantId);
-                if (participantId) {
-                  subscribeToQACurrent(groupId);
-                }
+                handleGroupSelByParti(participantId);
               }}
             >
-              <option value="">Select a participant</option>
-              {participants.map((participant) => (
+              {participants !== null && participants.length > 0 &&
+               participants.map((participant) => (
                 <option key={participant.id} value={participant.id}>
                   {participantGroups.get(participant.id)?.name || 'Loading...'}
                 </option>
               ))}
+              {participants !== null && participants.length === 0 && (
+                <option value="" className="text-red-500">No registered courses</option>
+              )}
+              {participants === null && (
+                <option value="" className="text-gray-500">Loading...</option>
+              )}
             </select>
+            <button
+              type="button"
+              disabled={selParticipantId === ''}
+              className="px-4 w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              onClick={() => {
+                if (subQaCur === null) {
+                  subscribeToQACurrent();
+                } else {
+                  unsubscribeResponseLog();
+                }
+              }}
+            >
+              {joinBtnLabel}
+            </button>
           </div>
           <div className="bg-white shadow rounded-lg p-6">
             <div className="space-y-6">
@@ -235,7 +274,7 @@ export default function UserDashboard() {
                     {/* Question */}
                     <div>
                       <h2 className="text-xl font-medium text-gray-900 mb-2">
-                        {qaData?.Question || "No question available"}
+                        {JSON.parse(currentQA.qa)?.Question || "No question available"}
                       </h2>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
                         {currentQA.duration > 0 && (
@@ -286,12 +325,12 @@ export default function UserDashboard() {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <p className="text-gray-500">No active question available</p>
+                    <p className="text-gray-500">{subQaCur !== null?'Waiting for new question ...':'Join a group to start the QA'}</p>
                   </div>
                 )
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-gray-500">No active question available</p>
+                  <p className="text-gray-500">{subQaCur !== null?'Waiting for new question ...':'Join a group to start the QA'}</p>
                 </div>
               )}
             </div>
